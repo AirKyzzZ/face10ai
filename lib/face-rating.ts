@@ -101,9 +101,9 @@ export async function analyzeFace(
   imageHash: string
 ): Promise<RatingResult> {
   try {
-    // Detect face with landmarks
+    // Detect face with landmarks using TinyFaceDetector
     const detection = await faceapi
-      .detectSingleFace(imageElement)
+      .detectSingleFace(imageElement, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks()
 
     if (!detection) {
