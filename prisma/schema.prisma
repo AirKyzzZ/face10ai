@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Application Models
+model User {
+  id                String              @id @default(cuid())
+  name              String?
+  email             String              @unique
+  emailVerified     DateTime?
+  image             String?
+  password          String?
+  authProvider      String              @default("email")
+  creditsRemaining  Int                 @default(0)
+  totalUploads      Int                 @default(0)
+  referralCode      String              @unique @default(cuid())
+  referredBy        String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  accounts          Account[]
+  sessions          Session[]
+  ratings           Rating[]
+  creditTransactions CreditTransaction[]
+  referralsGiven    Referral[]          @relation("ReferrerRelation")
+  referralsReceived Referral[]          @relation("ReferredRelation")
+
+  @@index([email])
+  @@index([referralCode])
+}
+
+model Rating {
+  id         String   @id @default(cuid())
+  userId     String?
+  imageHash  String   @unique
+  gender     String
+  score      Float
+  breakdown  Json
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([imageHash])
+  @@index([userId])
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  type        String
+  description String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Referral {
+  id              String   @id @default(cuid())
+  referrerId      String
+  referredUserId  String
+  creditsAwarded  Int
+  createdAt       DateTime @default(now())
+
+  referrer        User     @relation("ReferrerRelation", fields: [referrerId], references: [id], onDelete: Cascade)
+  referredUser    User     @relation("ReferredRelation", fields: [referredUserId], references: [id], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@index([referredUserId])
+}
+
+model AnonymousSession {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  ratingsUsed    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([sessionId])
+}
