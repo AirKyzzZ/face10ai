@@ -23,6 +23,7 @@ curl -O https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/w
 echo "Downloading face_recognition models..."
 curl -O https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_recognition_model-weights_manifest.json
 curl -O https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_recognition_model-shard1
+curl -O https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_recognition_model-shard2
 
 cd ../..
 
