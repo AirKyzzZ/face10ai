@@ -42,7 +42,7 @@ export default function RootLayout({
             {/* Background Grid */}
             <div className="absolute inset-0 pointer-events-none">
               <div
-                className="absolute left-1/2 top-[20px] -translate-x-1/2 w-[700px] h-[700px] bg-grid-black/[0.15] dark:bg-grid-white/[0.2] bg-[length:50px_50px]"
+                className="absolute left-1/2 top-[20px] -translate-x-1/2 w-[700px] h-[700px] bg-grid-white/[0.2] bg-[length:50px_50px]"
                 style={{
                   maskImage:
                     "radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 60%)",

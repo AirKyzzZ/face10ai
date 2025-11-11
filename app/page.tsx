@@ -147,8 +147,21 @@ export default function HomePage() {
     <div className="relative min-h-screen w-full h-full flex flex-col items-center overflow-hidden">
       <Header />
 
+      {/* White Grid in Hero Section */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute left-1/2 top-[20px] -translate-x-1/2 w-[700px] h-[700px] bg-grid-white/[0.2] bg-[length:50px_50px]"
+          style={{
+            maskImage:
+              "radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 60%)",
+            WebkitMaskImage:
+              "radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 60%)",
+          }}
+        />
+      </div>
+
       {/* Hero Section */}
-      <main className="relative pt-32 pb-16 container mx-auto px-4 z-10">
+      <main className="relative pt-32 pb-16 w-full max-w-7xl mx-auto px-4 z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -245,7 +258,7 @@ export default function HomePage() {
 
       {/* Product Demo Section - replaces video player */}
       <div className="min-h-screen mt-32 w-full h-full flex flex-col items-center overflow-hidden relative bg-gradient-to-b from-[#040508] to-[#0C0F15]">
-        <div className="w-[70%] relative flex flex-col items-center justify-center bg-black bp4:min-h-[600px] bp3:min-h-[500px] min-h-[700px] rounded-2xl overflow-hidden p-8">
+        <div className="w-[85%] max-w-6xl relative flex flex-col items-center justify-center bg-black bp4:min-h-[600px] bp3:min-h-[500px] min-h-[700px] rounded-2xl overflow-hidden p-8">
           {/* Animated Border Effects */}
           <BorderBeam
             duration={6}
@@ -336,16 +349,16 @@ export default function HomePage() {
                 "radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 60%)",
             }}
           />
+        </div>
 
-          <div className="flex flex-col justify-center mt-14 items-center w-full">
-            <p className="text-[16px] text-gray-200">Technologie utilisée par: </p>
-            <GlowingAdSenseCard />
-          </div>
+        <div className="flex flex-col justify-center mt-14 items-center w-full relative z-10">
+          <p className="text-[16px] text-gray-200">Technologie utilisée par: </p>
+          <GlowingAdSenseCard />
         </div>
 
       {/* Features Section */}
         <div className="flex mt-96 flex-col bg-transparent justify-center items-center w-full relative">
-          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl"></div>
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
           <div className="flex justify-center text-center bp1:mt-32 bp4:mt-44 mt-0 z-10">
             <HoverBorderGradient
@@ -357,8 +370,8 @@ export default function HomePage() {
             </HoverBorderGradient>
           </div>
 
-          <div className="w-[70%] flex flex-col mt-8 items-center justify-center relative z-10">
-            <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center">
+          <div className="w-[85%] max-w-5xl flex flex-col mt-8 items-center justify-center relative z-10">
+            <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center pointer-events-none">
               <div
                 className="absolute w-[400px] h-[200px] bg-[#5B698B]/40 opacity-80 blur-[80px]"
                 style={{ borderRadius: "50%" }}
@@ -372,7 +385,7 @@ export default function HomePage() {
               Caractéristiques Avancées pour une
             </p>
 
-            <div className="relative flex items-center w-full justify-center mt-1">
+            <div className="relative flex items-center w-full justify-center mt-1 pointer-events-none">
               <div className="absolute -left-40 h-[1px] w-[30%] bg-gradient-to-l to-black from-[#8096D2]"></div>
               <div className="absolute -right-40 h-[1px] w-[30%] bg-gradient-to-r to-black from-[#8096D2]"></div>
             </div>
@@ -387,7 +400,7 @@ export default function HomePage() {
 
         {/* Services Section */}
         <div className="flex bp6:-mt-48 -mt-24 flex-col bg-transparent bg-gradient-to-b to-[#040508] from-[#0C0F15] justify-center items-center w-full relative">
-          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl"></div>
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
           <div className="flex justify-center text-center z-10">
             <HoverBorderGradient
@@ -399,12 +412,12 @@ export default function HomePage() {
             </HoverBorderGradient>
           </div>
 
-          <div className="w-[70%] flex flex-col mt-8 items-center justify-center relative z-10">
+          <div className="w-[85%] max-w-5xl flex flex-col mt-8 items-center justify-center relative z-10">
             <p className=" text-5xl bp3:text-xl bp4:text-3xl text-center font-light">
               Services Innovants
             </p>
 
-            <div className="relative flex items-center w-full justify-center mt-1">
+            <div className="relative flex items-center w-full justify-center mt-1 pointer-events-none">
               <div className="absolute -left-40 h-[1px] w-[40%] bg-gradient-to-l to-black from-[#8096D2]"></div>
               <div className="absolute -right-40 h-[1px] w-[40%] bg-gradient-to-r to-black from-[#8096D2]"></div>
             </div>
@@ -479,7 +492,7 @@ export default function HomePage() {
 
         {/* Testimonials Section */}
         <div className="flex pt-32 flex-col bg-gradient-to-b from-[#040508] to-[#0C0F15] bg-transparent justify-center items-center w-full relative">
-          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl"></div>
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
           <div className="flex justify-center text-center z-10">
             <HoverBorderGradient
@@ -491,8 +504,8 @@ export default function HomePage() {
             </HoverBorderGradient>
           </div>
 
-          <div className="w-[70%] flex flex-col mt-7  items-center justify-center relative z-10">
-            <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center">
+          <div className="w-[85%] max-w-5xl flex flex-col mt-7  items-center justify-center relative z-10">
+            <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center pointer-events-none">
               <div
                 className="absolute w-[400px] h-[200px] bg-[#5B698B]/40 opacity-80 blur-[80px]"
                 style={{ borderRadius: "50%" }}
@@ -506,7 +519,7 @@ export default function HomePage() {
               Approuvé Par
             </p>
 
-            <div className="relative flex items-center w-full justify-center mt-1">
+            <div className="relative flex items-center w-full justify-center mt-1 pointer-events-none">
               <div className="absolute -left-40 h-[1px] w-[50%] bg-gradient-to-l to-black from-[#8096D2]"></div>
               <div className="absolute -right-40 h-[1px] w-[50%] bg-gradient-to-r to-black from-[#8096D2]"></div>
             </div>
@@ -550,7 +563,7 @@ export default function HomePage() {
 
         {/* Contact/CTA Section */}
         <div className="flex w-full mt-32 flex-col bg-gradient-to-b to-[#040508] from-[#0C0F15] bg-transparent justify-center items-center relative">
-          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl"></div>
+          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
           <div className="flex justify-center text-center z-10">
             <HoverBorderGradient
@@ -561,9 +574,9 @@ export default function HomePage() {
               <span>Nous contacter</span>
             </HoverBorderGradient>
           </div>
-          <div className="w-[80%] mt-10 mb-10 gap-20 flex bp7:flex-col flex-row items-center justify-evenly">
+          <div className="w-[90%] max-w-6xl mt-10 mb-10 gap-20 flex bp7:flex-col flex-row items-center justify-evenly">
             <div className="flex flex-col relative ">
-              <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center">
+              <div className="absolute inset-x-0 top-[-50px] z-0 flex justify-center pointer-events-none">
                 <div
                   className="absolute w-[400px] h-[200px] bg-[#5B698B]/40 opacity-80 blur-[80px]"
                   style={{ borderRadius: "50%" }}
@@ -643,7 +656,7 @@ export default function HomePage() {
 
         {/* Final CTA Section */}
         <div className="flex w-full pt-32 flex-col bg-gradient-to-b from-[#040508] to-[#0C0F15] bg-transparent justify-center items-center relative">
-          <div className="absolute inset-x-0 top-[-120px] z-0 flex justify-center">
+          <div className="absolute inset-x-0 top-[-120px] z-0 flex justify-center pointer-events-none">
             <div
               className="w-0 h-0
                 border-l-[300px] border-l-transparent
@@ -665,7 +678,7 @@ export default function HomePage() {
 
           <div className="absolute inset-0 pointer-events-none">
             <div
-              className="absolute left-1/2 top-[20px] -translate-x-1/2 w-[700px] h-[700px] bg-grid-black/[0.15] dark:bg-grid-white/[0.2] bg-[length:50px_50px]"
+              className="absolute left-1/2 top-[20px] -translate-x-1/2 w-[700px] h-[700px] bg-grid-white/[0.2] bg-[length:50px_50px]"
               style={{
                 maskImage:
                   "radial-gradient(circle, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 60%)",
@@ -700,7 +713,7 @@ export default function HomePage() {
             </motion.span>
           </motion.h1>
 
-          <div className="w-[70%] flex flex-col mt-16 items-center justify-center relative z-10">
+          <div className="w-[85%] max-w-5xl flex flex-col mt-16 items-center justify-center relative z-10">
             <p className="text-5xl text-center bp6:text-3xl">
               Prêt à découvrir
             </p>

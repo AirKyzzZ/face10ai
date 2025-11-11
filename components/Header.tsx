@@ -33,9 +33,9 @@ const Header = () => {
     <motion.div
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="relative w-[80%] top-0 z-50 bg-[#0D0E0F] bg-transparent backdrop-blur-md border mt-8 rounded-xl border-[#252627]"
+      className="relative w-[90%] max-w-7xl top-0 z-50 bg-[#0D0E0F] bg-transparent backdrop-blur-md border mt-8 rounded-xl border-[#252627]"
     >
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="w-full px-6 h-16 flex items-center justify-between">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -46,7 +46,7 @@ const Header = () => {
           </Link>
         </motion.div>
 
-        <NavigationMenu className="bp2:hidden flex">
+        <NavigationMenu className="hidden bp2:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent hover:bg-transparent data-[state=open]:text-white hover:text-white">
@@ -157,22 +157,22 @@ const Header = () => {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <Link href="/about" legacyBehavior passHref>
-                <NavigationMenuLink className={cn("text-sm")}>
+              <NavigationMenuLink asChild>
+                <Link href="/about" className={cn("text-sm")}>
                   Nous contacter
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        <AlignJustify className="w-6 h-6 bp3:flex hidden" />
+        <AlignJustify className="w-6 h-6 flex bp3:hidden" />
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bp3:hidden flex items-center gap-4"
+          className="hidden bp3:flex items-center gap-4"
         >
           <motion.button
             className="group relative overflow-hidden border-[2px] border-[#5B698B] rounded-full bg-gradient-to-b from-black to-[rgb(65,64,64)] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(0,0,0,0.30)]"
@@ -196,7 +196,7 @@ const Header = () => {
           </motion.button>
 
           <motion.button
-            className="group relative bp1:hidden flex border-[2px] border-[#5B698B] overflow-hidden rounded-full bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(255,255,255,0.2)]"
+            className="group relative hidden bp1:flex border-[2px] border-[#5B698B] overflow-hidden rounded-full bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(255,255,255,0.2)]"
             onMouseMove={handleMouseMove}
             onHoverStart={() => setIsHovered2(true)}
             onHoverEnd={() => setIsHovered2(false)}
