@@ -360,7 +360,7 @@ export default function HomePage() {
         </div>
 
         {/* Features Section */}
-        <div className="flex mt-96 flex-col bg-transparent justify-center items-center w-full relative">
+        <div className="flex mt-20 flex-col bg-transparent justify-center items-center w-full relative">
           <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
           <div className="flex justify-center text-center bp1:mt-32 bp4:mt-44 mt-0 z-10">
