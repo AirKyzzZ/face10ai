@@ -53,7 +53,7 @@ const Header = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent hover:bg-transparent data-[state=open]:text-white hover:text-white transition-colors duration-200">
-                  Products
+                  Produits
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <motion.ul 
@@ -64,7 +64,7 @@ const Header = () => {
                   >
                     <li className="col-span-1">
                       <span className="text-lg font-medium text-[#5B698B]">
-                        Products
+                        Produits
                       </span>
                       <ul className="mt-4 space-y-2">
                         <li>
@@ -73,7 +73,7 @@ const Header = () => {
                               href="/dashboard"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Dashboard
+                              Tableau de bord
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -84,7 +84,7 @@ const Header = () => {
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Face Analysis
+                              Analyse IA
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -99,7 +99,7 @@ const Header = () => {
                               href="/about"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              About
+                              À propos
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -112,7 +112,7 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent hover:bg-transparent data-[state=open]:text-white hover:text-white transition-colors duration-200">
-                  Tools
+                  Outils
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <motion.ul 
@@ -123,7 +123,7 @@ const Header = () => {
                   >
                     <li className="col-span-1">
                       <span className="text-lg font-medium text-[#5B698B]">
-                        Tools
+                        Outils
                       </span>
                       <ul className="mt-4 space-y-2">
                         <li>
@@ -132,7 +132,7 @@ const Header = () => {
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Face Analyzer
+                              Analyseur IA
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -143,7 +143,7 @@ const Header = () => {
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Symmetry Calculator
+                              Modèle Entraîné
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -158,7 +158,7 @@ const Header = () => {
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Golden Ratio
+                              Base de Données IA
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
                             </a>
                           </NavigationMenuLink>
@@ -172,7 +172,7 @@ const Header = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link href="/about" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200")}>
-                    Contact Us
+                    Nous contacter
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -229,7 +229,7 @@ const Header = () => {
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="px-4 py-2 text-white text-sm font-light hover:text-red-400 transition-colors duration-200"
               >
-                Log out
+                Déconnexion
               </button>
             </>
           ) : (
@@ -242,7 +242,7 @@ const Header = () => {
                 onHoverEnd={() => setIsHovered1(false)}
                 onClick={() => router.push('/auth/signin')}
               >
-                <span className="relative z-10">Log in</span>
+                <span className="relative z-10">Connexion</span>
                 {isHovered1 && (
                   <motion.div
                     className="absolute inset-0 z-0"
@@ -264,7 +264,7 @@ const Header = () => {
                 onHoverEnd={() => setIsHovered2(false)}
                 onClick={() => router.push('/auth/signup')}
               >
-                <span className="relative z-10">Get Started</span>
+                <span className="relative z-10">Commencer</span>
                 {isHovered2 && (
                   <motion.div
                     className="absolute inset-0 z-0"

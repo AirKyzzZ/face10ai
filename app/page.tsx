@@ -240,7 +240,7 @@ export default function HomePage() {
             transition={{ delay: 0.6 }}
             className="max-w-2xl mx-auto text-[15px] text-white"
           >
-            Analysez votre visage avec notre IA avancée. Découvrez votre note basée sur la symétrie faciale, les proportions et le nombre d'or - tout cela en quelques secondes.
+            Notre intelligence artificielle, entraînée sur des milliers de visages, analyse votre attractivité avec une précision inégalée. Obtenez votre note personnalisée en quelques secondes grâce à notre modèle d'apprentissage profond.
           </motion.p>
 
           <motion.div
@@ -394,7 +394,7 @@ export default function HomePage() {
             </div>
 
             <p className="text-5xl bp4:text-3xl bp3:text-xl text-center mt-2 bg-gradient-to-b from-[#8096D2] to-[#b7b9be] bg-clip-text text-transparent font-light leading-tight">
-              Analyse Précise et Scientifique
+              Analyse Basée sur l'IA
             </p>
           </div>
 
@@ -432,25 +432,25 @@ export default function HomePage() {
 
           <div className="grid grid-cols-3 bp1:grid-cols-2 bp6:grid-cols-1 mt-14 gap-0 mb-10">
             <Grid
-              title={"Analyse de Symétrie"}
+              title={"Analyse Intelligente"}
               text={
-                "Notre IA analyse la symétrie parfaite de votre visage selon des critères scientifiques reconnus pour une évaluation précise."
+                "Notre modèle d'IA a été entraîné sur des milliers de visages pour évaluer votre attractivité avec une précision exceptionnelle."
               }
             >
               <Scan className="w-20 h-20" />
             </Grid>
             <Grid
-              title={"Détection du Nombre d'Or"}
+              title={"Apprentissage Profond"}
               text={
-                "Découvrez comment votre visage correspond aux proportions idéales du nombre d'or, utilisées depuis l'Antiquité."
+                "Notre réseau neuronal avancé identifie les caractéristiques faciales qui déterminent l'attractivité selon des milliers d'exemples réels."
               }
             >
               <TrendingUp className="w-20 h-20" />
             </Grid>
             <Grid
-              title={"Notation IA Avancée"}
+              title={"Notation par IA"}
               text={
-                "Obtenez une note détaillée basée sur des algorithmes d'apprentissage profond entraînés sur des milliers de visages."
+                "Recevez une note précise générée par notre intelligence artificielle entraînée sur une base de données massive de visages humains."
               }
             >
               <Brain className="w-20 h-20" />
@@ -472,9 +472,9 @@ export default function HomePage() {
               <Zap className="w-20 h-20" />
             </Grid>
             <Grid
-              title={"Méthodologie Scientifique"}
+              title={"Intelligence Artificielle"}
               text={
-                "Basé sur des études en psychologie évolutionniste et des recherches sur l'attractivité faciale reconnues mondialement."
+                "Notre modèle utilise l'apprentissage automatique pour analyser des milliers de caractéristiques faciales et fournir une évaluation fiable."
               }
             >
               <Shield className="w-20 h-20" />
@@ -538,27 +538,27 @@ export default function HomePage() {
 
           <div className="grid grid-cols-3 bp1:grid-cols-2 bp6:grid-cols-1 mt-14 gap-4 mb-10">
             <Grid2
-              text="J'étais curieux de connaître ma note et les résultats étaient très détaillés ! L'analyse de la symétrie m'a vraiment impressionné."
+              text="J'étais curieux de connaître ma note et les résultats étaient très détaillés ! L'IA est vraiment impressionnante, on voit qu'elle a été bien entraînée."
               name="Marc, 28 ans - Paris"
             />
             <Grid2
-              text="Application fascinante qui utilise de vrais critères scientifiques. Les explications sur le nombre d'or sont très intéressantes."
+              text="Application fascinante qui utilise une vraie intelligence artificielle. Savoir que l'IA a été entraînée sur des milliers de visages rassure sur la fiabilité."
               name="Sophie, 24 ans - Lyon"
             />
             <Grid2
-              text="Rapide, précis et totalement confidentiel. J'ai adoré découvrir ma note et comprendre les critères d'analyse."
+              text="Rapide, précis et totalement confidentiel. La technologie d'IA derrière est vraiment poussée, les résultats sont cohérents !"
               name="Thomas, 31 ans - Marseille"
             />
             <Grid2
-              text="Une expérience vraiment unique ! Les résultats sont présentés de manière claire et l'interface est magnifique."
+              text="Une expérience vraiment unique ! On sent que le modèle d'IA a appris sur une énorme base de données. Les résultats sont bluffants."
               name="Emma, 26 ans - Bordeaux"
             />
             <Grid2
-              text="J'ai testé avec mes amis et on a tous été surpris par la précision de l'analyse. Le système de parrainage est génial !"
+              text="J'ai testé avec mes amis et on a tous été surpris par la précision de l'IA. Le système de parrainage est génial !"
               name="Lucas, 29 ans - Toulouse"
             />
             <Grid2
-              text="Excellente application pour comprendre les proportions faciales. Les résultats instantanés et le respect de la vie privée sont parfaits."
+              text="Excellente application basée sur l'intelligence artificielle. Les résultats instantanés et le respect de la vie privée sont parfaits."
               name="Léa, 25 ans - Nantes"
             />
           </div>
