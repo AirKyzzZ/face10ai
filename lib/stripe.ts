@@ -1,11 +1,13 @@
+import 'server-only'
 import Stripe from 'stripe'
+import { TIER_CREDITS } from './subscription-config'
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY environment variable')
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-10-29.clover',
   typescript: true,
 })
 
@@ -15,15 +17,9 @@ export const STRIPE_PRICE_IDS = {
   PREMIUM: process.env.STRIPE_PREMIUM_PRICE_ID || '',
 }
 
-// Subscription tier credits mapping
-export const TIER_CREDITS = {
-  FREE: 5,
-  PRO: 25,
-  PREMIUM: 50,
-}
-
-// Subscription tier names
-export type SubscriptionTier = 'FREE' | 'PRO' | 'PREMIUM'
+// Re-export for convenience in server code
+export { TIER_CREDITS } from './subscription-config'
+export type { SubscriptionTier } from './subscription-config'
 
 export interface CreateCheckoutSessionParams {
   userId: string

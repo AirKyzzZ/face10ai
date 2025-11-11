@@ -489,7 +489,7 @@ export default function HomePage() {
               className="dark:bg-black border-[1px] border-[#5A678A] bg-white text-black dark:text-white flex items-center space-x-2"
               style={{ background: "linear-gradient(to bottom, black, white)" }}
             >
-              <span className="text-xl font-light">Nous contacter</span>
+              <span className="text-xl font-light">Lorem Ipsum</span>
             </HoverBorderGradient>
           </div>
         </div>
@@ -611,7 +611,7 @@ export default function HomePage() {
               </div>
               <div className="mt-8 flex flex-row gap-3 items-end">
                 <MapPin className="w-6 h-6 text-[#8096D2]" />
-                <p className="font-light text-sm">Paris, France</p>
+                <p className="font-light text-sm">Bordeaux, France</p>
               </div>
             </div>
 
@@ -782,7 +782,7 @@ export default function HomePage() {
                 <div className="flex flex-row gap-3 items-end">
                   <MapPin className="w-4 h-4 text-[#8096D2]" />
                   <p className="font-light text-[#C5CDE3] text-sm">
-                    Paris, France
+                    Bordeaux, France
                   </p>
                 </div>
               </div>

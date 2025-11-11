@@ -1,5 +1,5 @@
 import { prisma } from './prisma'
-import { TIER_CREDITS } from './stripe'
+import { TIER_CREDITS } from './subscription-config'
 
 export async function checkCredits(userId: string): Promise<number> {
   // Check if credits need to be refreshed
