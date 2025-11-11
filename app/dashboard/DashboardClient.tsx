@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Copy, Coins, TrendingUp, Users, Calendar } from 'lucide-react'
+import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft } from 'lucide-react'
 import { generateReferralUrl } from '@/lib/referrals'
 import { BorderBeam } from '@/components/magicui/border-beam'
 
@@ -63,10 +63,28 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
   return (
     <div className="min-h-screen px-4 py-16">
       <div className="max-w-7xl mx-auto">
+        {/* Back to Homepage Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6"
+        >
+          <motion.button
+            onClick={() => router.push('/')}
+            whileHover={{ scale: 1.02, x: -5 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-lg text-white hover:border-[#8096D2] transition-all group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-light">Retour à l'accueil</span>
+          </motion.button>
+        </motion.div>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
           className="mb-8"
         >
           <h1 className="text-4xl font-light text-white mb-2">
