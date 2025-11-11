@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft } from 'lucide-react'
+import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft, RefreshCw } from 'lucide-react'
 import { generateReferralUrl } from '@/lib/referrals'
 import { BorderBeam } from '@/components/magicui/border-beam'
 
@@ -45,12 +45,42 @@ interface DashboardClientProps {
 export default function DashboardClient({ user, referralStats }: DashboardClientProps) {
   const router = useRouter()
   const [copied, setCopied] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncMessage, setSyncMessage] = useState<string | null>(null)
   const referralUrl = generateReferralUrl(user.referralCode)
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const syncSubscription = async () => {
+    setIsSyncing(true)
+    setSyncMessage(null)
+    
+    try {
+      const response = await fetch('/api/stripe/sync-subscription', {
+        method: 'POST',
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setSyncMessage(`✅ ${data.message}`)
+        // Refresh the page after 1 second to show updated data
+        setTimeout(() => {
+          router.refresh()
+        }, 1000)
+      } else {
+        setSyncMessage(`❌ ${data.error || 'Erreur de synchronisation'}`)
+      }
+    } catch (error) {
+      setSyncMessage('❌ Erreur de connexion')
+    } finally {
+      setIsSyncing(false)
+      setTimeout(() => setSyncMessage(null), 5000)
+    }
   }
 
   const getScoreColor = (score: number) => {
@@ -63,11 +93,11 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
   return (
     <div className="min-h-screen px-4 py-16">
       <div className="max-w-7xl mx-auto">
-        {/* Back to Homepage Button */}
+        {/* Back to Homepage Button & Sync */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-6"
+          className="mb-6 flex items-center gap-4 flex-wrap"
         >
           <motion.button
             onClick={() => router.push('/')}
@@ -78,6 +108,32 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="font-light">Retour à l'accueil</span>
           </motion.button>
+
+          {/* Sync Subscription Button */}
+          <motion.button
+            onClick={syncSubscription}
+            disabled={isSyncing}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] border-2 border-[#5B698B] rounded-lg text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span className="font-light">
+              {isSyncing ? 'Synchronisation...' : 'Sync Abonnement'}
+            </span>
+          </motion.button>
+
+          {/* Sync Message */}
+          {syncMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="px-4 py-2 bg-[#2E3139] border border-[#5B698B] rounded-lg text-sm"
+            >
+              {syncMessage}
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Header */}
