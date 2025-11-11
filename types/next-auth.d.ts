@@ -9,6 +9,9 @@ declare module 'next-auth' {
       image?: string | null
       creditsRemaining?: number
       referralCode?: string
+      subscriptionTier?: string
+      subscriptionStatus?: string | null
+      stripeCustomerId?: string | null
     }
   }
 
@@ -19,6 +22,9 @@ declare module 'next-auth' {
     image?: string | null
     creditsRemaining?: number
     referralCode?: string
+    subscriptionTier?: string
+    subscriptionStatus?: string | null
+    stripeCustomerId?: string | null
   }
 }
 
@@ -27,5 +33,8 @@ declare module 'next-auth/jwt' {
     id: string
     creditsRemaining?: number
     referralCode?: string
+    subscriptionTier?: string
+    subscriptionStatus?: string | null
+    stripeCustomerId?: string | null
   }
 }

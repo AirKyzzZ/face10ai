@@ -62,6 +62,16 @@ model User {
   totalUploads      Int                 @default(0)
   referralCode      String              @unique @default(cuid())
   referredBy        String?
+  
+  // Subscription fields
+  subscriptionTier  String              @default("FREE")
+  subscriptionStatus String?
+  stripeCustomerId  String?             @unique
+  stripeSubscriptionId String?          @unique
+  subscriptionStartDate DateTime?
+  subscriptionEndDate DateTime?
+  creditsResetAt    DateTime?
+  
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 
@@ -74,6 +84,8 @@ model User {
 
   @@index([email])
   @@index([referralCode])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
 }
 
 model Rating {

@@ -18,6 +18,7 @@ import GlowingAdSenseCard from "@/components/template/Social";
 import BentoGrid from "@/components/template/bento-grid";
 import Grid from "@/components/template/grid";
 import Grid2 from "@/components/template/grid2";
+import { PricingSection } from "@/components/pricing/PricingSection";
 
 import {
   Scan,
@@ -564,6 +565,9 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Pricing Section */}
+        <PricingSection />
+
         {/* Contact/CTA Section */}
         <div className="flex w-full mt-32 flex-col bg-gradient-to-b to-[#040508] from-[#0C0F15] bg-transparent justify-center items-center relative">
           <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
@@ -794,6 +798,12 @@ export default function HomePage() {
                       className="hover:text-[#8096D2] transition-colors"
                     >
                       Accueil
+                    </a>
+                    <a
+                      href="/pricing"
+                      className="hover:text-[#8096D2] transition-colors"
+                    >
+                      Tarifs
                     </a>
                     <a
                       href="/dashboard"

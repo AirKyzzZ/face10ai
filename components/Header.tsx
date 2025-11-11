@@ -171,6 +171,14 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
+                  <Link href="/pricing" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200")}>
+                    Tarifs
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
                   <Link href="/about" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200")}>
                     Nous contacter
                   </Link>

@@ -97,18 +97,24 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         
-        // Fetch latest user data including credits
+        // Fetch latest user data including credits and subscription
         const user = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: {
             creditsRemaining: true,
             referralCode: true,
+            subscriptionTier: true,
+            subscriptionStatus: true,
+            stripeCustomerId: true,
           },
         })
         
         if (user) {
           session.user.creditsRemaining = user.creditsRemaining
           session.user.referralCode = user.referralCode
+          session.user.subscriptionTier = user.subscriptionTier
+          session.user.subscriptionStatus = user.subscriptionStatus
+          session.user.stripeCustomerId = user.stripeCustomerId
         }
       }
       return session
