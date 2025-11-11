@@ -171,7 +171,7 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/pricing" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200")}>
+                  <Link href="/pricing" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200 px-4")}>
                     Tarifs
                   </Link>
                 </NavigationMenuLink>
@@ -179,7 +179,7 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <Link href="/about" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200")}>
+                  <Link href="/about" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200 px-4")}>
                     Nous contacter
                   </Link>
                 </NavigationMenuLink>
