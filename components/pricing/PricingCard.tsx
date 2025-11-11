@@ -30,9 +30,11 @@ export function PricingCard({
   const { data: session } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const isCurrentPlan = session?.user?.subscriptionTier === tier;
   const isFree = tier === 'FREE';
+  const isActiveSubscription = isCurrentPlan && !isFree && session?.user?.subscriptionStatus === 'active';
 
   const handleSubscribe = async () => {
     if (isFree) {
@@ -68,6 +70,33 @@ export function PricingCard({
       console.error('Subscription error:', error);
       alert('Erreur lors de la création de l\'abonnement');
       setIsLoading(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!confirm('Êtes-vous sûr de vouloir annuler votre abonnement ? Vous garderez vos crédits actuels jusqu\'à la fin de la période.')) {
+      return;
+    }
+
+    setIsCancelling(true);
+    try {
+      const response = await fetch('/api/stripe/cancel-subscription', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert(`Abonnement annulé. Valide jusqu'au ${new Date(data.endsAt).toLocaleDateString()}`);
+        router.refresh();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error: any) {
+      console.error('Cancel error:', error);
+      alert(error.message || 'Erreur lors de l\'annulation');
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -136,25 +165,45 @@ export function PricingCard({
         ))}
       </ul>
 
-      <motion.button
-        onClick={handleSubscribe}
-        disabled={isCurrentPlan || isLoading}
-        whileHover={!isCurrentPlan ? { scale: 1.02 } : {}}
-        whileTap={!isCurrentPlan ? { scale: 0.98 } : {}}
-        className={`w-full py-4 rounded-xl font-light text-lg transition-all ${
-          isCurrentPlan
-            ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-            : isPopular
-            ? 'bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white border-2 border-[#5B698B] hover:opacity-90'
-            : 'bg-gradient-to-b from-black to-[rgb(65,64,64)] text-white border-2 border-[#5B698B] hover:border-[#8096D2]'
-        } disabled:opacity-50`}
-      >
-        {isLoading ? 'Chargement...' : getButtonText()}
-      </motion.button>
+      {isActiveSubscription ? (
+        // Cancel button for active subscriptions
+        <motion.button
+          onClick={handleCancel}
+          disabled={isCancelling}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-4 rounded-xl font-light text-lg transition-all bg-gradient-to-b from-red-600 to-red-800 text-white border-2 border-red-500 hover:opacity-90 disabled:opacity-50"
+        >
+          {isCancelling ? 'Annulation...' : 'Annuler l\'Abonnement'}
+        </motion.button>
+      ) : (
+        // Subscribe button
+        <motion.button
+          onClick={handleSubscribe}
+          disabled={isCurrentPlan || isLoading}
+          whileHover={!isCurrentPlan ? { scale: 1.02 } : {}}
+          whileTap={!isCurrentPlan ? { scale: 0.98 } : {}}
+          className={`w-full py-4 rounded-xl font-light text-lg transition-all ${
+            isCurrentPlan
+              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              : isPopular
+              ? 'bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white border-2 border-[#5B698B] hover:opacity-90'
+              : 'bg-gradient-to-b from-black to-[rgb(65,64,64)] text-white border-2 border-[#5B698B] hover:border-[#8096D2]'
+          } disabled:opacity-50`}
+        >
+          {isLoading ? 'Chargement...' : getButtonText()}
+        </motion.button>
+      )}
 
       {!isFree && !isCurrentPlan && (
         <p className="text-center text-xs text-gray-500 mt-3">
           Annulation possible à tout moment
+        </p>
+      )}
+      
+      {isCurrentPlan && session?.user?.subscriptionStatus === 'canceled' && (
+        <p className="text-center text-xs text-yellow-500 mt-3">
+          Abonnement annulé - Valide jusqu'à la fin de la période
         </p>
       )}
     </motion.div>

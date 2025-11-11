@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft, RefreshCw } from 'lucide-react'
+import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft, RefreshCw, Crown, Zap, AlertCircle } from 'lucide-react'
 import { generateReferralUrl } from '@/lib/referrals'
 import { BorderBeam } from '@/components/magicui/border-beam'
 
@@ -47,7 +47,11 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
   const [copied, setCopied] = useState(false)
   const [isSyncing, setIsSyncing] = useState(false)
   const [syncMessage, setSyncMessage] = useState<string | null>(null)
+  const [isCancelling, setIsCancelling] = useState(false)
   const referralUrl = generateReferralUrl(user.referralCode)
+  
+  const subscriptionTier = (user as any).subscriptionTier || 'FREE'
+  const subscriptionStatus = (user as any).subscriptionStatus
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralUrl)
@@ -80,6 +84,32 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
     } finally {
       setIsSyncing(false)
       setTimeout(() => setSyncMessage(null), 5000)
+    }
+  }
+
+  const cancelSubscription = async () => {
+    if (!confirm('Êtes-vous sûr de vouloir annuler votre abonnement ? Vous garderez vos crédits actuels jusqu\'à la fin de la période.')) {
+      return
+    }
+
+    setIsCancelling(true)
+    try {
+      const response = await fetch('/api/stripe/cancel-subscription', {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(`Abonnement annulé. Valide jusqu'au ${new Date(data.endsAt).toLocaleDateString()}`)
+        router.refresh()
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (error: any) {
+      alert(error.message || 'Erreur lors de l\'annulation')
+    } finally {
+      setIsCancelling(false)
     }
   }
 
@@ -206,6 +236,76 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
             </p>
           </motion.div>
         </div>
+
+        {/* Subscription Management */}
+        {subscriptionTier !== 'FREE' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-8 bg-gradient-to-br from-[#2E3139] to-[#1E2536] border-2 border-[#5B698B] rounded-2xl p-6"
+          >
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                {subscriptionTier === 'PRO' ? (
+                  <div className="p-3 bg-[#5B698B]/20 rounded-lg">
+                    <Zap className="w-8 h-8 text-[#8096D2]" />
+                  </div>
+                ) : (
+                  <div className="p-3 bg-[#5B698B]/20 rounded-lg">
+                    <Crown className="w-8 h-8 text-[#8096D2]" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-2xl font-light text-white flex items-center gap-2">
+                    Abonnement {subscriptionTier}
+                    {subscriptionStatus === 'canceled' && (
+                      <span className="text-sm px-2 py-1 bg-yellow-500/20 text-yellow-500 rounded-full">
+                        Annulé
+                      </span>
+                    )}
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {subscriptionTier === 'PRO' ? '25 crédits par mois' : '50 crédits par mois'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {subscriptionStatus === 'active' ? (
+                  <motion.button
+                    onClick={cancelSubscription}
+                    disabled={isCancelling}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-red-600 to-red-800 border-2 border-red-500 rounded-lg text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="font-light">
+                      {isCancelling ? 'Annulation...' : 'Annuler l\'Abonnement'}
+                    </span>
+                  </motion.button>
+                ) : subscriptionStatus === 'canceled' ? (
+                  <div className="flex items-center gap-2 px-6 py-3 bg-yellow-500/20 border-2 border-yellow-500 rounded-lg text-yellow-500">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="font-light text-sm">
+                      Valide jusqu'à la fin de la période
+                    </span>
+                  </div>
+                ) : null}
+                
+                <motion.button
+                  onClick={() => router.push('/pricing')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-6 py-3 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] border-2 border-[#5B698B] rounded-lg text-white hover:opacity-90 transition-all font-light"
+                >
+                  Voir les Tarifs
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Past Analyses */}
