@@ -76,4 +76,3 @@ export async function getCreditHistory(userId: string, limit = 10) {
     take: limit,
   })
 }
-

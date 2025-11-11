@@ -12,14 +12,16 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, Coins } from "lucide-react";
 
 const Header = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered1, setIsHovered1] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleMouseMove = (event: React.MouseEvent<HTMLButtonElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -174,47 +176,77 @@ const Header = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="hidden bp3:flex items-center gap-4"
         >
-          <motion.button
-            className="group relative overflow-hidden border-[2px] border-[#5B698B] rounded-full bg-gradient-to-b from-black to-[rgb(65,64,64)] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(0,0,0,0.30)]"
-            onMouseMove={handleMouseMove}
-            onHoverStart={() => setIsHovered1(true)}
-            onHoverEnd={() => setIsHovered1(false)}
-            onClick={() => router.push('/auth/signin')}
-          >
-            <span className="relative z-10">Se connecter</span>
-            {isHovered1 && (
-              <motion.div
-                className="absolute inset-0 z-0"
-                animate={{
-                  background: [
-                    `radial-gradient(40px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.15), transparent 50%)`,
-                  ],
-                }}
-                transition={{ duration: 0.15 }}
-              />
-            )}
-          </motion.button>
+          {session ? (
+            <>
+              {/* Credit Badge */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#2E3139] to-[#1E2536] border-[1px] border-[#5B698B] rounded-full">
+                <Coins className="w-4 h-4 text-[#8096D2]" />
+                <span className="text-white font-light text-sm">
+                  {session.user.creditsRemaining || 0} crédits
+                </span>
+              </div>
 
-          <motion.button
-            className="group relative hidden bp1:flex border-[2px] border-[#5B698B] overflow-hidden rounded-full bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(255,255,255,0.2)]"
-            onMouseMove={handleMouseMove}
-            onHoverStart={() => setIsHovered2(true)}
-            onHoverEnd={() => setIsHovered2(false)}
-            onClick={() => router.push('/auth/signup')}
-          >
-            <span className="relative z-10">Créer un compte</span>
-            {isHovered2 && (
-              <motion.div
-                className="absolute inset-0 z-0"
-                animate={{
-                  background: [
-                    `radial-gradient(40px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.2), transparent 50%)`,
-                  ],
-                }}
-                transition={{ duration: 0.15 }}
-              />
-            )}
-          </motion.button>
+              {/* User Menu */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-4 py-2 text-white text-sm font-light hover:text-[#8096D2] transition-colors"
+                >
+                  Tableau de bord
+                </button>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="px-4 py-2 text-white text-sm font-light hover:text-red-400 transition-colors"
+                >
+                  Déconnexion
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <motion.button
+                className="group relative overflow-hidden border-[2px] border-[#5B698B] rounded-full bg-gradient-to-b from-black to-[rgb(65,64,64)] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(0,0,0,0.30)]"
+                onMouseMove={handleMouseMove}
+                onHoverStart={() => setIsHovered1(true)}
+                onHoverEnd={() => setIsHovered1(false)}
+                onClick={() => router.push('/auth/signin')}
+              >
+                <span className="relative z-10">Se connecter</span>
+                {isHovered1 && (
+                  <motion.div
+                    className="absolute inset-0 z-0"
+                    animate={{
+                      background: [
+                        `radial-gradient(40px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.15), transparent 50%)`,
+                      ],
+                    }}
+                    transition={{ duration: 0.15 }}
+                  />
+                )}
+              </motion.button>
+
+              <motion.button
+                className="group relative hidden bp1:flex border-[2px] border-[#5B698B] overflow-hidden rounded-full bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] px-8 py-2 text-white backdrop-blur-sm transition-colors hover:bg-[rgba(255,255,255,0.2)]"
+                onMouseMove={handleMouseMove}
+                onHoverStart={() => setIsHovered2(true)}
+                onHoverEnd={() => setIsHovered2(false)}
+                onClick={() => router.push('/auth/signup')}
+              >
+                <span className="relative z-10">Créer un compte</span>
+                {isHovered2 && (
+                  <motion.div
+                    className="absolute inset-0 z-0"
+                    animate={{
+                      background: [
+                        `radial-gradient(40px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.2), transparent 50%)`,
+                      ],
+                    }}
+                    transition={{ duration: 0.15 }}
+                  />
+                )}
+              </motion.button>
+            </>
+          )}
         </motion.div>
       </div>
     </motion.div>

@@ -64,4 +64,3 @@ export async function getAnonymousRatingsRemaining(sessionId: string): Promise<n
 
   return Math.max(0, MAX_ANONYMOUS_RATINGS - session.ratingsUsed)
 }
-

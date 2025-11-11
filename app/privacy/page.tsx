@@ -1,180 +1,118 @@
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Politique de confidentialité - Combien sur 10',
-  description: 'Politique de confidentialité et protection des données personnelles',
-}
+import Link from 'next/link'
+import Header from '@/components/Header'
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Politique de confidentialité
+    <div className="min-h-screen">
+      <Header />
+      
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <div className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border-[2px] border-[#5B698B] rounded-2xl p-8 md:p-12">
+          <h1 className="text-4xl font-light text-white mb-6">
+            Politique de Confidentialité
           </h1>
 
-          <p className="text-sm text-gray-500 mb-8">
-            Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}
-          </p>
+          <div className="space-y-6 text-gray-300 font-light leading-relaxed">
+            <p className="text-sm text-gray-400">
+              Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}
+            </p>
 
-          <div className="prose prose-lg max-w-none text-gray-600 space-y-6">
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                1. Introduction
-              </h2>
-              <p>
-                Chez Combien sur 10, nous respectons votre vie privée et nous engageons à protéger
-                vos données personnelles. Cette politique de confidentialité explique comment nous
-                collectons, utilisons et protégeons vos informations conformément au Règlement
-                Général sur la Protection des Données (RGPD).
-              </p>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              1. Collecte des Données
+            </h2>
+            <p>
+              combiensur10.fr collecte uniquement les données nécessaires au fonctionnement du service :
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Email et mot de passe (pour les comptes utilisateurs)</li>
+              <li>Résultats d'analyse (scores et statistiques uniquement)</li>
+              <li>Données de parrainage (codes et relations)</li>
+            </ul>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                2. Données collectées
-              </h2>
-              <p>Nous collectons les données suivantes :</p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Informations de compte :</strong> email, nom (si fourni), mot de passe
-                  (crypté)
-                </li>
-                <li>
-                  <strong>Résultats d'analyse :</strong> scores d'attractivité, métadonnées
-                  d'analyse (PAS les photos)
-                </li>
-                <li>
-                  <strong>Données d'utilisation :</strong> historique des analyses, crédits
-                  utilisés, parrainages
-                </li>
-                <li>
-                  <strong>Données techniques :</strong> adresse IP, type de navigateur, cookies
-                </li>
-              </ul>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              2. Traitement des Images
+            </h2>
+            <p>
+              <strong className="text-white">Important :</strong> Vos photos ne sont jamais stockées sur nos serveurs. L'analyse faciale se fait entièrement dans votre navigateur grâce à la technologie face-api.js. Seul un hash cryptographique de l'image (pour éviter les duplications) et les résultats d'analyse sont sauvegardés.
+            </p>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                3. Traitement des photos
-              </h2>
-              <p className="font-semibold text-purple-600">
-                IMPORTANT : Vos photos ne sont JAMAIS stockées sur nos serveurs.
-              </p>
-              <p>
-                L'analyse faciale se fait directement dans votre navigateur. Une fois l'analyse
-                terminée, la photo est supprimée. Seuls les résultats d'analyse (score, breakdown)
-                sont conservés en base de données.
-              </p>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              3. Utilisation des Données
+            </h2>
+            <p>
+              Vos données sont utilisées exclusivement pour :
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Fournir le service d'analyse faciale</li>
+              <li>Gérer votre compte utilisateur</li>
+              <li>Gérer le système de crédits et de parrainage</li>
+              <li>Améliorer notre service</li>
+            </ul>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                4. Utilisation des données
-              </h2>
-              <p>Nous utilisons vos données pour :</p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Fournir et améliorer nos services</li>
-                <li>Gérer votre compte et vos crédits</li>
-                <li>Traiter les parrainages et récompenses</li>
-                <li>Communiquer avec vous (si nécessaire)</li>
-                <li>Assurer la sécurité de la plateforme</li>
-              </ul>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              4. Partage des Données
+            </h2>
+            <p>
+              Nous ne vendons, n'échangeons et ne transférons pas vos données personnelles à des tiers. Vos informations restent strictement confidentielles.
+            </p>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                5. Partage des données
-              </h2>
-              <p>
-                Nous ne vendons ni ne partageons vos données personnelles avec des tiers, sauf :
-              </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Avec votre consentement explicite</li>
-                <li>Pour respecter nos obligations légales</li>
-                <li>Pour protéger nos droits et notre sécurité</li>
-              </ul>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              5. Cookies et Suivi
+            </h2>
+            <p>
+              Nous utilisons des cookies essentiels pour :
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Maintenir votre session connectée</li>
+              <li>Suivre les analyses anonymes (pour la limite gratuite)</li>
+              <li>Enregistrer vos préférences</li>
+            </ul>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                6. Cookies
-              </h2>
-              <p>
-                Nous utilisons des cookies pour améliorer votre expérience :
-              </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Cookies de session (authentification)</li>
-                <li>Cookies de suivi anonyme (limites d'utilisation)</li>
-                <li>Cookies de préférence (paramètres utilisateur)</li>
-              </ul>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              6. Sécurité
+            </h2>
+            <p>
+              Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données personnelles contre tout accès non autorisé, modification, divulgation ou destruction.
+            </p>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                7. Vos droits (RGPD)
-              </h2>
-              <p>Conformément au RGPD, vous avez le droit de :</p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Accéder à vos données personnelles</li>
-                <li>Rectifier vos données</li>
-                <li>Supprimer vos données (droit à l'oubli)</li>
-                <li>Exporter vos données (portabilité)</li>
-                <li>Vous opposer au traitement de vos données</li>
-                <li>Retirer votre consentement à tout moment</li>
-              </ul>
-              <p className="mt-4">
-                Pour exercer ces droits, contactez-nous à{' '}
-                <a
-                  href="mailto:contact@combiensur10.fr"
-                  className="text-purple-600 hover:underline"
-                >
-                  contact@combiensur10.fr
-                </a>
-              </p>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              7. Vos Droits
+            </h2>
+            <p>
+              Conformément au RGPD, vous avez le droit de :
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Accéder à vos données personnelles</li>
+              <li>Rectifier vos données</li>
+              <li>Supprimer votre compte et vos données</li>
+              <li>Vous opposer au traitement de vos données</li>
+              <li>Porter vos données</li>
+            </ul>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                8. Sécurité
-              </h2>
-              <p>
-                Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos
-                données contre tout accès non autorisé, modification, divulgation ou destruction.
-              </p>
-            </section>
+            <h2 className="text-2xl font-light text-white mt-8 mb-4">
+              8. Contact
+            </h2>
+            <p>
+              Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, contactez-nous à{' '}
+              <a 
+                href="mailto:contact@combiensur10.fr" 
+                className="text-[#8096D2] hover:underline"
+              >
+                contact@combiensur10.fr
+              </a>
+            </p>
+          </div>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                9. Conservation des données
-              </h2>
-              <p>
-                Nous conservons vos données tant que votre compte est actif. Si vous supprimez
-                votre compte, toutes vos données personnelles seront effacées dans un délai de
-                30 jours.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                10. Contact
-              </h2>
-              <p>
-                Pour toute question concernant cette politique de confidentialité, contactez-nous
-                à{' '}
-                <a
-                  href="mailto:contact@combiensur10.fr"
-                  className="text-purple-600 hover:underline"
-                >
-                  contact@combiensur10.fr
-                </a>
-              </p>
-            </section>
+          <div className="mt-10 text-center">
+            <Link
+              href="/"
+              className="inline-block px-8 py-3 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white rounded-xl font-light hover:opacity-90 transition-opacity"
+            >
+              Retour à l'accueil
+            </Link>
           </div>
         </div>
       </div>
     </div>
   )
 }
-

@@ -1,217 +1,282 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ReferralSection } from '@/components/ReferralSection'
+import { useRouter } from 'next/navigation'
+import { Copy, Coins, TrendingUp, Users, Calendar } from 'lucide-react'
+import { generateReferralUrl } from '@/lib/referrals'
+import { BorderBeam } from '@/components/magicui/border-beam'
 
-interface DashboardClientProps {
-  user: {
-    name: string
-    email: string
-    creditsRemaining: number
-    totalUploads: number
-    referralCode: string
-    createdAt: Date
-  }
+interface User {
+  id: string
+  name: string | null
+  email: string
+  creditsRemaining: number
+  referralCode: string
+  createdAt: Date
   ratings: Array<{
     id: string
     score: number
     gender: string
     createdAt: Date
   }>
-  creditTransactions: Array<{
-    id: string
-    amount: number
-    type: string
-    description: string
-    createdAt: Date
-  }>
-  referralStats: {
-    totalReferrals: number
-    totalCreditsEarned: number
-    referrals: any[]
-  }
-  referralUrl: string
 }
 
-export function DashboardClient({
-  user,
-  ratings,
-  creditTransactions,
-  referralStats,
-  referralUrl,
-}: DashboardClientProps) {
+interface ReferralStats {
+  totalReferrals: number
+  totalCreditsEarned: number
+  referrals: Array<{
+    id: string
+    creditsAwarded: number
+    createdAt: Date
+    referredUser: {
+      name: string | null
+      email: string
+      createdAt: Date
+    }
+  }>
+}
+
+interface DashboardClientProps {
+  user: User
+  referralStats: ReferralStats
+}
+
+export default function DashboardClient({ user, referralStats }: DashboardClientProps) {
   const router = useRouter()
+  const [copied, setCopied] = useState(false)
+  const referralUrl = generateReferralUrl(user.referralCode)
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(referralUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'text-green-400'
+    if (score >= 6) return 'text-blue-400'
+    if (score >= 4) return 'text-yellow-400'
+    return 'text-red-400'
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen px-4 py-16">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-light text-white mb-2">
             Tableau de bord
           </h1>
-          <p className="text-gray-600">
-            Bienvenue, {user.name} !
+          <p className="text-gray-400 font-light">
+            Bienvenue {user.name || 'sur votre tableau de bord'}
           </p>
         </motion.div>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <StatsCard
-            icon="💳"
-            label="Crédits disponibles"
-            value={user.creditsRemaining}
-            color="purple"
-          />
-          <StatsCard
-            icon="📸"
-            label="Analyses effectuées"
-            value={user.totalUploads}
-            color="blue"
-          />
-          <StatsCard
-            icon="👥"
-            label="Parrainages"
-            value={referralStats.totalReferrals}
-            color="green"
-          />
-        </div>
-
-        {/* Referral Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
-        >
-          <ReferralSection
-            referralCode={user.referralCode}
-            referralUrl={referralUrl}
-            stats={{
-              totalReferrals: referralStats.totalReferrals,
-              totalCreditsEarned: referralStats.totalCreditsEarned,
-            }}
-          />
-        </motion.div>
-
-        {/* Two Column Layout */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Upload History */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="relative bg-gradient-to-br from-[#2E3139] to-[#1E2536] border-[2px] border-[#5B698B] rounded-2xl p-6 overflow-hidden"
           >
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Historique des analyses
-              </h2>
-              {ratings.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="mb-4">Aucune analyse pour le moment</p>
-                  <button
-                    onClick={() => router.push('/')}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-                  >
-                    Faire ma première analyse
-                  </button>
+            <BorderBeam duration={8} size={300} />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-[#5B698B]/20 rounded-lg">
+                  <Coins className="w-6 h-6 text-[#8096D2]" />
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {ratings.map((rating) => (
-                    <div
-                      key={rating.id}
-                      onClick={() => router.push(`/result/${rating.id}`)}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
-                    >
-                      <div>
-                        <div className="font-semibold text-gray-900">
-                          Score: {rating.score}/10
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {rating.gender === 'homme' ? '👨' : '👩'} {' '}
-                          {new Date(rating.createdAt).toLocaleDateString('fr-FR')}
-                        </div>
-                      </div>
-                      <svg
-                        className="w-5 h-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  ))}
-                </div>
-              )}
+                <h3 className="text-lg font-light text-gray-300">Crédits</h3>
+              </div>
+              <p className="text-4xl font-bold text-white">{user.creditsRemaining}</p>
+              <p className="text-sm text-gray-400 mt-1">crédits disponibles</p>
             </div>
           </motion.div>
 
-          {/* Credit History */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-2xl p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-[#5B698B]/20 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-[#8096D2]" />
+              </div>
+              <h3 className="text-lg font-light text-gray-300">Analyses</h3>
+            </div>
+            <p className="text-4xl font-bold text-white">{user.ratings.length}</p>
+            <p className="text-sm text-gray-400 mt-1">analyses effectuées</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-2xl p-6"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-[#5B698B]/20 rounded-lg">
+                <Users className="w-6 h-6 text-[#8096D2]" />
+              </div>
+              <h3 className="text-lg font-light text-gray-300">Parrainages</h3>
+            </div>
+            <p className="text-4xl font-bold text-white">{referralStats.totalReferrals}</p>
+            <p className="text-sm text-gray-400 mt-1">
+              {referralStats.totalCreditsEarned} crédits gagnés
+            </p>
+          </motion.div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Past Analyses */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-2xl p-6"
+          >
+            <h2 className="text-2xl font-light text-white mb-6">
+              Vos Analyses
+            </h2>
+
+            {user.ratings.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-400 mb-4">Aucune analyse pour le moment</p>
+                <button
+                  onClick={() => router.push('/')}
+                  className="px-6 py-2 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white rounded-lg font-light hover:opacity-90 transition-opacity"
+                >
+                  Commencer une analyse
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {user.ratings.map((rating) => (
+                  <motion.div
+                    key={rating.id}
+                    whileHover={{ scale: 1.02 }}
+                    onClick={() => router.push(`/result/${rating.id}`)}
+                    className="p-4 bg-black/30 border border-[#5B698B]/50 rounded-lg cursor-pointer hover:border-[#8096D2] transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">
+                          {rating.gender === 'homme' ? '👨' : '👩'}
+                        </span>
+                        <div>
+                          <p className={`text-2xl font-bold ${getScoreColor(rating.score)}`}>
+                            {rating.score.toFixed(1)}/10
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {new Date(rating.createdAt).toLocaleDateString('fr-FR')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-gray-400">→</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+
+          {/* Referral Section */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
+            className="bg-gradient-to-br from-green-900/20 to-green-800/20 border border-green-500/30 rounded-2xl p-6"
           >
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Historique des crédits
-              </h2>
-              {creditTransactions.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  Aucune transaction pour le moment
+            <h2 className="text-2xl font-light text-green-300 mb-2">
+              🎁 Programme de Parrainage
+            </h2>
+            <p className="text-sm text-gray-300 mb-6">
+              Invitez vos amis et recevez 10 crédits pour chaque inscription !
+            </p>
+
+            {/* Referral Link */}
+            <div className="mb-6">
+              <label className="block text-sm text-gray-300 mb-2 font-light">
+                Votre lien de parrainage
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={referralUrl}
+                  readOnly
+                  className="flex-1 px-4 py-2 bg-black/30 border border-green-500/30 rounded-lg text-white text-sm"
+                />
+                <button
+                  onClick={copyToClipboard}
+                  className="px-4 py-2 bg-green-600/30 border border-green-500/50 rounded-lg text-green-300 hover:bg-green-600/40 transition-colors flex items-center gap-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  {copied ? 'Copié!' : 'Copier'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                Code: <span className="font-mono text-green-400">{user.referralCode}</span>
+              </p>
+            </div>
+
+            {/* Referral Stats */}
+            <div className="mb-6 p-4 bg-black/30 border border-green-500/20 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <p className="text-3xl font-bold text-green-400">
+                    {referralStats.totalReferrals}
+                  </p>
+                  <p className="text-xs text-gray-400">Parrainages</p>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {creditTransactions.map((transaction) => (
+                <div>
+                  <p className="text-3xl font-bold text-green-400">
+                    {referralStats.totalCreditsEarned}
+                  </p>
+                  <p className="text-xs text-gray-400">Crédits gagnés</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Referral List */}
+            {referralStats.referrals.length > 0 && (
+              <div>
+                <h3 className="text-sm text-gray-300 mb-3 font-light">
+                  Vos parrainages récents
+                </h3>
+                <div className="space-y-2">
+                  {referralStats.referrals.slice(0, 5).map((referral) => (
                     <div
-                      key={transaction.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      key={referral.id}
+                      className="p-3 bg-black/30 border border-green-500/20 rounded-lg"
                     >
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">
-                          {transaction.description}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-white font-light">
+                            {referral.referredUser.name || referral.referredUser.email}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {new Date(referral.createdAt).toLocaleDateString('fr-FR')}
+                          </p>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          {new Date(transaction.createdAt).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                        <div className="text-green-400 text-sm font-bold">
+                          +{referral.creditsAwarded}
                         </div>
-                      </div>
-                      <div
-                        className={`font-bold text-lg ${
-                          transaction.amount > 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        {transaction.amount > 0 ? '+' : ''}
-                        {transaction.amount}
                       </div>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
+        {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -220,39 +285,12 @@ export function DashboardClient({
         >
           <button
             onClick={() => router.push('/')}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"
+            className="px-8 py-4 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white rounded-xl font-light text-lg hover:opacity-90 transition-opacity"
           >
-            ✨ Nouvelle analyse
+            Nouvelle Analyse
           </button>
         </motion.div>
       </div>
     </div>
   )
 }
-
-interface StatsCardProps {
-  icon: string
-  label: string
-  value: number
-  color: 'purple' | 'blue' | 'green'
-}
-
-function StatsCard({ icon, label, value, color }: StatsCardProps) {
-  const colorClasses = {
-    purple: 'from-purple-500 to-purple-600',
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-  }
-
-  return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className={`bg-gradient-to-br ${colorClasses[color]} rounded-2xl p-6 text-white shadow-lg`}
-    >
-      <div className="text-4xl mb-2">{icon}</div>
-      <div className="text-3xl font-bold mb-1">{value}</div>
-      <div className="text-sm opacity-90">{label}</div>
-    </motion.div>
-  )
-}
-

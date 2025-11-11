@@ -164,4 +164,3 @@ export async function loadFaceApiModels(modelsPath = '/models'): Promise<void> {
     faceapi.nets.faceRecognitionNet.loadFromUri(modelsPath),
   ])
 }
-

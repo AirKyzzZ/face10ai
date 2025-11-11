@@ -1,156 +1,284 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { RatingDisplay } from '@/components/RatingDisplay'
-import { ShareButtons } from '@/components/ShareButtons'
-import { CreditBadge } from '@/components/CreditBadge'
-import { FaceAnalysis } from '@/lib/face-rating'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { BorderBeam } from '@/components/magicui/border-beam'
+import { generateReferralUrl } from '@/lib/referrals'
+import { Copy, Share2, Twitter, Facebook, ArrowRight } from 'lucide-react'
 
-interface ResultClientProps {
-  rating: {
-    id: string
-    score: number
-    breakdown: any
-    gender: string
-    createdAt: Date
+interface Rating {
+  id: string
+  score: number
+  gender: string
+  breakdown: {
+    symmetry: number
+    proportions: number
+    features: number
+    overall: number
   }
-  session: any
+  createdAt: Date
+  user?: {
+    referralCode?: string
+    name?: string | null
+  } | null
 }
 
-export function ResultClient({ rating, session }: ResultClientProps) {
-  const router = useRouter()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-  const resultUrl = `${appUrl}/result/${rating.id}`
+interface ResultClientProps {
+  rating: Rating
+}
 
-  const breakdown: FaceAnalysis = {
-    symmetry: rating.breakdown.symmetry || 0,
-    proportions: rating.breakdown.proportions || 0,
-    features: rating.breakdown.features || 0,
-    overall: rating.breakdown.overall || 0,
+export default function ResultClient({ rating }: ResultClientProps) {
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [copied, setCopied] = useState(false)
+  const [copiedReferral, setCopiedReferral] = useState(false)
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const referralUrl = rating.user?.referralCode
+    ? generateReferralUrl(rating.user.referralCode)
+    : ''
+
+  const copyToClipboard = (text: string, setCopiedState: (value: boolean) => void) => {
+    navigator.clipboard.writeText(text)
+    setCopiedState(true)
+    setTimeout(() => setCopiedState(false), 2000)
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8) return 'from-green-400 to-green-600'
+    if (score >= 6) return 'from-blue-400 to-blue-600'
+    if (score >= 4) return 'from-yellow-400 to-yellow-600'
+    return 'from-red-400 to-red-600'
+  }
+
+  const getScoreMessage = (score: number) => {
+    if (score >= 9) return 'Exceptionnel !'
+    if (score >= 8) return 'Excellent !'
+    if (score >= 7) return 'Très bien !'
+    if (score >= 6) return 'Bien !'
+    if (score >= 5) return 'Moyen'
+    return 'Peut mieux faire'
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Votre résultat
-          </h1>
-          <p className="text-gray-600">
-            Analyse basée sur la symétrie, les proportions et les traits faciaux
-          </p>
-        </motion.div>
-
-        {/* Credits Badge */}
-        {session?.user && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex justify-center mb-6"
-          >
-            <CreditBadge credits={session.user.creditsRemaining || 0} />
-          </motion.div>
-        )}
-
-        {/* Rating Display */}
+    <div className="min-h-screen flex flex-col items-center px-4 py-16">
+      <div className="w-full max-w-4xl">
+        {/* Score Display */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
+          className="relative bg-gradient-to-br from-[#2E3139] to-[#1E2536] border-[2px] border-[#5B698B] rounded-2xl p-8 mb-8 overflow-hidden"
         >
-          <RatingDisplay score={rating.score} breakdown={breakdown} />
+          <BorderBeam
+            duration={8}
+            size={500}
+            className="from-transparent via-purple-500 to-transparent"
+          />
+          
+          <div className="relative z-10 text-center">
+            <h1 className="text-2xl font-light text-gray-300 mb-4">
+              Votre Note d'Attractivité
+            </h1>
+            
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+              className={`inline-block text-9xl font-bold bg-gradient-to-r ${getScoreColor(rating.score)} bg-clip-text text-transparent mb-4`}
+            >
+              {rating.score.toFixed(1)}
+              <span className="text-5xl text-white/50">/10</span>
+            </motion.div>
+            
+            <p className="text-xl text-white font-light">{getScoreMessage(rating.score)}</p>
+            <p className="text-sm text-gray-400 mt-2">
+              Genre: {rating.gender === 'homme' ? '👨 Homme' : '👩 Femme'}
+            </p>
+          </div>
         </motion.div>
+
+        {/* Breakdown Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-xl p-6"
+          >
+            <h3 className="text-lg font-light text-gray-300 mb-2">Symétrie</h3>
+            <div className="flex items-end gap-2">
+              <span className="text-4xl font-bold text-[#8096D2]">
+                {rating.breakdown.symmetry}
+              </span>
+              <span className="text-xl text-gray-400 mb-1">/100</span>
+            </div>
+            <div className="mt-3 h-2 bg-black/30 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${rating.breakdown.symmetry}%` }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="h-full bg-gradient-to-r from-[#5B698B] to-[#8096D2]"
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-xl p-6"
+          >
+            <h3 className="text-lg font-light text-gray-300 mb-2">Nombre d'Or</h3>
+            <div className="flex items-end gap-2">
+              <span className="text-4xl font-bold text-[#8096D2]">
+                {rating.breakdown.proportions}
+              </span>
+              <span className="text-xl text-gray-400 mb-1">/100</span>
+            </div>
+            <div className="mt-3 h-2 bg-black/30 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${rating.breakdown.proportions}%` }}
+                transition={{ delay: 0.6, duration: 1 }}
+                className="h-full bg-gradient-to-r from-[#5B698B] to-[#8096D2]"
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-xl p-6"
+          >
+            <h3 className="text-lg font-light text-gray-300 mb-2">Qualité des Traits</h3>
+            <div className="flex items-end gap-2">
+              <span className="text-4xl font-bold text-[#8096D2]">
+                {rating.breakdown.features}
+              </span>
+              <span className="text-xl text-gray-400 mb-1">/100</span>
+            </div>
+            <div className="mt-3 h-2 bg-black/30 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${rating.breakdown.features}%` }}
+                transition={{ delay: 0.7, duration: 1 }}
+                className="h-full bg-gradient-to-r from-[#5B698B] to-[#8096D2]"
+              />
+            </div>
+          </motion.div>
+        </div>
 
         {/* Share Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl p-8 shadow-lg mb-8"
+          transition={{ delay: 0.6 }}
+          className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-xl p-6 mb-8"
         >
-          <ShareButtons score={rating.score} url={resultUrl} />
+          <h3 className="text-lg font-light text-gray-300 mb-4 flex items-center gap-2">
+            <Share2 className="w-5 h-5" />
+            Partager vos résultats
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => copyToClipboard(shareUrl, setCopied)}
+              className="flex items-center gap-2 px-4 py-2 bg-black/30 border border-[#5B698B] rounded-lg text-white hover:bg-black/50 transition-colors"
+            >
+              <Copy className="w-4 h-4" />
+              {copied ? 'Copié !' : 'Copier le lien'}
+            </button>
+            <a
+              href={`https://twitter.com/intent/tweet?text=J'ai obtenu ${rating.score}/10 sur combiensur10.fr !&url=${shareUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 border border-blue-500/50 rounded-lg text-blue-300 hover:bg-blue-600/30 transition-colors"
+            >
+              <Twitter className="w-4 h-4" />
+              Twitter
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-700/20 border border-blue-600/50 rounded-lg text-blue-300 hover:bg-blue-700/30 transition-colors"
+            >
+              <Facebook className="w-4 h-4" />
+              Facebook
+            </a>
+          </div>
         </motion.div>
 
-        {/* Call to Action */}
+        {/* Referral Section (if authenticated) */}
+        {session && referralUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="bg-gradient-to-br from-green-900/20 to-green-800/20 border border-green-500/30 rounded-xl p-6 mb-8"
+          >
+            <h3 className="text-lg font-light text-green-300 mb-2">
+              🎁 Parrainez vos amis et gagnez des crédits !
+            </h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Invitez vos amis à essayer combiensur10.fr et recevez 10 crédits gratuits pour chaque inscription !
+            </p>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={referralUrl}
+                readOnly
+                className="flex-1 px-4 py-2 bg-black/30 border border-green-500/30 rounded-lg text-white text-sm"
+              />
+              <button
+                onClick={() => copyToClipboard(referralUrl, setCopiedReferral)}
+                className="px-4 py-2 bg-green-600/30 border border-green-500/50 rounded-lg text-green-300 hover:bg-green-600/40 transition-colors"
+              >
+                {copiedReferral ? 'Copié !' : 'Copier'}
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-2">
+              Votre code de parrainage: <span className="font-mono text-green-400">{rating.user?.referralCode}</span>
+            </p>
+          </motion.div>
+        )}
+
+        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="text-center space-y-4"
+          transition={{ delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4"
         >
           <button
             onClick={() => router.push('/')}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"
+            className="flex-1 px-6 py-3 bg-gradient-to-b from-[rgb(91,105,139)] to-[#414040] text-white rounded-xl font-light hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >
-            ✨ Essayer à nouveau
+            Analyser un autre visage
+            <ArrowRight className="w-4 h-4" />
           </button>
-
+          
           {!session && (
-            <div className="p-6 bg-purple-50 rounded-xl border-2 border-purple-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Vous avez épuisé votre essai gratuit 🎁
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Créez un compte pour obtenir <strong>5 crédits gratuits</strong> et
-                gagnez-en plus en parrainant vos amis !
-              </p>
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => router.push('/auth/signup')}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-                >
-                  S'inscrire gratuitement
-                </button>
-                <button
-                  onClick={() => router.push('/auth/signin')}
-                  className="px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold border-2 border-purple-600 hover:bg-purple-50 transition-colors"
-                >
-                  Se connecter
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={() => router.push('/auth/signup')}
+              className="flex-1 px-6 py-3 border-2 border-[#5B698B] text-white rounded-xl font-light hover:bg-[#5B698B]/10 transition-colors"
+            >
+              Créer un compte
+            </button>
           )}
-
+          
           {session && (
-            <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Gagnez plus de crédits ! 🎁
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Partagez votre lien de parrainage et gagnez{' '}
-                <strong>10 crédits par ami inscrit</strong>
-              </p>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
-              >
-                Voir mon tableau de bord
-              </button>
-            </div>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="flex-1 px-6 py-3 border-2 border-[#5B698B] text-white rounded-xl font-light hover:bg-[#5B698B]/10 transition-colors"
+            >
+              Tableau de bord
+            </button>
           )}
-        </motion.div>
-
-        {/* Info Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-12 text-center text-sm text-gray-500"
-        >
-          <p>
-            💡 L'attractivité est subjective. Ce score est basé sur des critères
-            techniques et ne définit pas votre valeur personnelle.
-          </p>
         </motion.div>
       </div>
     </div>
   )
 }
-

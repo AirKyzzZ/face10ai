@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { trackReferral } from '@/lib/referrals'
+import { addCredits } from '@/lib/credits'
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,30 +31,31 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user with initial credits
+    // Initial credits
     const initialCredits = parseInt(process.env.INITIAL_SIGNUP_CREDITS || '5')
 
+    // Create user
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        name: name || email.split('@')[0],
+        name: name || null,
         creditsRemaining: initialCredits,
         authProvider: 'email',
       },
     })
 
-    // Create initial credit transaction
+    // Add initial credit transaction
     await prisma.creditTransaction.create({
       data: {
         userId: user.id,
         amount: initialCredits,
-        type: 'initial',
+        type: 'signup',
         description: 'Crédits initiaux pour nouveau compte',
       },
     })
 
-    // Track referral if provided
+    // Track referral if code provided
     if (referralCode) {
       await trackReferral(referralCode, user.id)
     }
@@ -69,9 +71,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la création du compte' },
+      { error: 'Erreur lors de l\'inscription' },
       { status: 500 }
     )
   }
 }
-

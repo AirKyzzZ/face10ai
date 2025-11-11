@@ -9,4 +9,3 @@ export async function hashImageFile(file: File): Promise<string> {
   const buffer = Buffer.from(arrayBuffer)
   return generateImageHash(buffer)
 }
-

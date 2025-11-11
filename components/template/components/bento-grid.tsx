@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Cog, UserCircle } from "lucide-react";
 import { BorderBeam } from "../magicui/border-beam";
-import RadarTargetingCard from "./radar-targeting-card";
+import RadarTargetingCard from "./radar-tragetting-card";
 import BarGraph3D from "./bar-graph";
 import PieChart3D from "./pie-charts";
 
@@ -100,10 +100,12 @@ export default function BentoGrid() {
                 {/* Card Content */}
                 <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent">
                   <h3 className="text-[16px] text-white">
-                    Atteindre l'Audience Cible
+                    Reach Target Audience2
                   </h3>
                   <p className="text-gray-400 text-sm">
-                    Ciblez l'audience parfaite avec précision. Notre ciblage alimenté par l'IA garantit que chaque message résonne là où c'est le plus important.
+                    Pinpoint the perfect audience with precision. Our AI-driven
+                    targeting ensures every message resonates where it matters
+                    most.
                   </p>
                 </div>
               </div>
@@ -155,16 +157,18 @@ export default function BentoGrid() {
 
                     {/* "Gen AI Powered" Text Positioned Above the Line */}
                     <div className="absolute -right-[95px] top-[calc(50%-14px)] -translate-y-1/2 text-[#7586B4] text-[10px] font-light">
-                      IA Générative
+                      Gen AI Powered
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Analyse Facilitée par l'IA
+                    Marketing made Easier
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Gagnez du temps et simplifiez l'analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
+                    Save time and simplify campaign management. Let automated
+                    workflows handle the heavy lifting, so you can focus on
+                    creativity.
                   </p>
                 </div>
               </CardContent>
@@ -216,10 +220,12 @@ export default function BentoGrid() {
 
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Résultats Détaillés et Précis
+                    Smart Marketing Insights
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Débloquez des données exploitables pour guider chaque décision. Restez en avance sur les tendances, affinez vos stratégies et agissez en toute confiance.
+                    Unlock actionable data to guide every decision. Stay ahead
+                    of trends, refine your strategies, and make confident moves
+                    with powerful analytics.
                   </p>
                 </div>
               </CardContent>
@@ -313,10 +319,12 @@ export default function BentoGrid() {
               {/* Card Content */}
               <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent">
                 <h3 className="text-[16px] text-white">
-                  Atteindre l'Audience Cible
+                  Reach Target Audience
                 </h3>
                 <p className="text-gray-400 text-sm">
-                  Ciblez l'audience parfaite avec précision. Notre ciblage alimenté par l'IA garantit que chaque message résonne là où c'est le plus important.
+                  Pinpoint the perfect audience with precision. Our AI-driven
+                  targeting ensures every message resonates where it matters
+                  most.
                 </p>
               </div>
             </div>
@@ -367,16 +375,18 @@ export default function BentoGrid() {
 
                     {/* "Gen AI Powered" Text Positioned Above the Line */}
                     <div className="absolute -right-[95px] top-[calc(50%-14px)] -translate-y-1/2 text-[#7586B4] text-[10px] font-light">
-                      IA Générative
+                      Gen AI Powered
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Analyse Facilitée par l'IA
+                    Marketing made Easier
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Gagnez du temps et simplifiez l'analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
+                    Save time and simplify campaign management. Let automated
+                    workflows handle the heavy lifting, so you can focus on
+                    creativity.
                   </p>
                 </div>
               </CardContent>
@@ -428,10 +438,12 @@ export default function BentoGrid() {
 
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Résultats Détaillés et Précis
+                    Smart Marketing Insights
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Débloquez des données exploitables pour guider chaque décision. Restez en avance sur les tendances, affinez vos stratégies et agissez en toute confiance.
+                    Unlock actionable data to guide every decision. Stay ahead
+                    of trends, refine your strategies, and make confident moves
+                    with powerful analytics.
                   </p>
                 </div>
               </CardContent>

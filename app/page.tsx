@@ -1,21 +1,24 @@
-'use client'
+/* eslint-disable @next/next/no-html-link-for-pages */
+"use client";
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 import * as faceapi from 'face-api.js'
+
+import Header from "@/components/Header";
 import { GenderSelector } from '@/components/GenderSelector'
 import { ImageUploader } from '@/components/ImageUploader'
 import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating'
-import Header from '@/components/Header'
-import { HoverBorderGradient } from '@/components/template/FramerButton'
-import { BorderBeam } from '@/components/magicui/border-beam'
-import LogoMarquee from '@/components/template/marquee'
-import GlowingAdSenseCard from '@/components/template/Social'
-import BentoGrid from '@/components/template/bento-grid'
-import Grid from '@/components/template/grid'
-import Grid2 from '@/components/template/grid2'
+import { HoverBorderGradient } from "@/components/template/FramerButton";
+import { BorderBeam } from "@/components/magicui/border-beam";
+import LogoMarquee from "@/components/template/marquee";
+import GlowingAdSenseCard from "@/components/template/Social";
+import BentoGrid from "@/components/template/bento-grid";
+import Grid from "@/components/template/grid";
+import Grid2 from "@/components/template/grid2";
+
 import {
   Scan,
   Brain,
@@ -25,7 +28,7 @@ import {
   Shield,
   Mail,
   MapPin,
-} from 'lucide-react'
+} from "lucide-react";
 
 export default function HomePage() {
   const router = useRouter()
@@ -164,7 +167,7 @@ export default function HomePage() {
       <main className="relative pt-32 pb-16 w-full max-w-7xl mx-auto px-4 z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center space-y-6 flex flex-col gap-8 items-center justify-center"
         >
@@ -199,7 +202,7 @@ export default function HomePage() {
             className="text-8xl text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
           >
             <motion.span
-              className="text-[#d0d2d8] bp3:text-6xl text-8xl font-light relative flex space-x-1"
+              className="text-[#d0d2d8] bp3:text-6xl text-8xl font-light relative flex space-x-1 justify-center"
               onHoverStart={() => setIsHovered(true)}
               onHoverEnd={() => setIsHovered(false)}
             >
@@ -256,7 +259,7 @@ export default function HomePage() {
         </motion.div>
       </main>
 
-      {/* Product Demo Section - replaces video player */}
+      {/* Product Demo Section - Face Upload Interface */}
       <div className="min-h-screen mt-32 w-full h-full flex flex-col items-center overflow-hidden relative bg-gradient-to-b from-[#040508] to-[#0C0F15]">
         <div className="w-[85%] max-w-6xl relative flex flex-col items-center justify-center bg-black bp4:min-h-[600px] bp3:min-h-[500px] min-h-[700px] rounded-2xl overflow-hidden p-8">
           {/* Animated Border Effects */}
@@ -356,7 +359,7 @@ export default function HomePage() {
           <GlowingAdSenseCard />
         </div>
 
-      {/* Features Section */}
+        {/* Features Section */}
         <div className="flex mt-96 flex-col bg-transparent justify-center items-center w-full relative">
           <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-gradient-radial from-[#293249] to-transparent opacity-40 blur-3xl pointer-events-none"></div>
 
@@ -694,7 +697,7 @@ export default function HomePage() {
             className="text-8xl text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
           >
             <motion.span
-              className="text-[#d0d2d8] bp6:text-5xl text-8xl font-light relative flex space-x-1"
+              className="text-[#d0d2d8] bp6:text-5xl text-8xl font-light relative flex space-x-1 justify-center"
             >
               {"combiensur10.fr".split("").map((char, index) => (
                 <motion.span
@@ -778,7 +781,7 @@ export default function HomePage() {
                     Paris, France
                   </p>
                 </div>
-    </div>
+              </div>
 
               <div className="flex flex-row gap-16 bp3:flex-col bp3:gap-8">
                 <div>
@@ -807,7 +810,7 @@ export default function HomePage() {
                   </nav>
                 </div>
 
-      <div>
+                <div>
                   <h3 className="text-[#C5CDE3] text-2xl font-bold mb-4">
                     Légal
                   </h3>
