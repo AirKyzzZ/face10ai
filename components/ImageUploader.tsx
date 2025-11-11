@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { BorderBeam } from './magicui/border-beam'
 
 interface ImageUploaderProps {
   onImageSelect: (file: File) => void
@@ -41,21 +42,26 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
   })
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <motion.div
+    <div className="w-full max-w-2xl mx-auto">
+      <div
         {...getRootProps()}
-        whileHover={{ scale: disabled ? 1 : 1.02 }}
-        className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
+        className={`relative border-[2px] rounded-2xl p-8 text-center transition-all bg-gradient-to-br from-[#2E3139] to-[#1E2536] overflow-hidden ${
           isDragActive
-            ? 'border-purple-600 bg-purple-50'
-            : 'border-gray-300 bg-white hover:border-purple-400'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            ? 'border-[#7586B4] bg-[#2E3139]/90'
+            : 'border-[#5B698B]'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01]'}`}
       >
+        <BorderBeam
+          duration={6}
+          delay={3}
+          size={400}
+          className="from-transparent via-blue-500 to-transparent"
+        />
         <input {...getInputProps()} />
 
         {preview ? (
-          <div className="space-y-4">
-            <div className="relative w-full h-64 rounded-lg overflow-hidden">
+          <div className="space-y-4 relative z-10">
+            <div className="relative w-full h-80 rounded-lg overflow-hidden border-2 border-[#5B698B]">
               <Image
                 src={preview}
                 alt="Preview"
@@ -63,42 +69,53 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
                 className="object-cover"
               />
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-300 font-light">
               Cliquez ou déposez une autre image pour changer
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            <svg
-              className="w-16 h-16 mx-auto text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="space-y-6 relative z-10">
+            <motion.div
+              animate={{
+                y: [0, -10, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="flex justify-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
+              <svg
+                className="w-24 h-24 text-[#7586B4]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+            </motion.div>
             <div>
-              <p className="text-lg font-medium text-gray-900">
+              <p className="text-xl font-light text-white mb-2">
                 {isDragActive
                   ? 'Déposez votre photo ici'
                   : 'Glissez votre photo ici'}
               </p>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-400 font-light">
                 ou cliquez pour sélectionner
               </p>
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 font-light">
               JPG, PNG ou WebP (max 10MB)
             </p>
           </div>
         )}
-      </motion.div>
+      </div>
     </div>
   )
 }
-
