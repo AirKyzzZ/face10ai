@@ -254,7 +254,7 @@ export default function HomePage() {
               Commencer l'Analyse
             </HoverBorderGradient>
             <p className="text-sm text-white/50">
-              Essai gratuit • Résultats instantanés • 100% confidentiel
+                Essai gratuit sans création de compte • Résultats instantanés • 100% confidentiel
             </p>
           </motion.div>
         </motion.div>
