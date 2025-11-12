@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -14,20 +14,69 @@ interface ImageUploaderProps {
 export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
   const [preview, setPreview] = useState<string | null>(null)
 
+  const processFile = useCallback(
+    (file: File) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+      onImageSelect(file)
+    },
+    [onImageSelect]
+  )
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0]
       if (file) {
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setPreview(reader.result as string)
-        }
-        reader.readAsDataURL(file)
-        onImageSelect(file)
+        processFile(file)
       }
     },
-    [onImageSelect]
+    [processFile]
   )
+
+  // Handle paste events
+  useEffect(() => {
+    if (disabled) return
+
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items
+      if (!items) return
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        
+        // Check if the item is an image
+        if (item.type.indexOf('image') !== -1) {
+          e.preventDefault()
+          const file = item.getAsFile()
+          
+          if (file) {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+            if (!allowedTypes.includes(file.type)) {
+              alert('Type de fichier non autorisé. Utilisez JPEG, PNG ou WebP.')
+              return
+            }
+            
+            // Validate file size (10MB max)
+            const maxSize = 10 * 1024 * 1024
+            if (file.size > maxSize) {
+              alert('Le fichier est trop volumineux. Maximum 10MB.')
+              return
+            }
+            
+            processFile(file)
+          }
+          break
+        }
+      }
+    }
+
+    window.addEventListener('paste', handlePaste)
+    return () => window.removeEventListener('paste', handlePaste)
+  }, [disabled, processFile])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -107,7 +156,7 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
                   : 'Glissez votre photo ici'}
               </p>
               <p className="text-sm text-gray-400 font-light">
-                ou cliquez pour sélectionner
+                ou cliquez pour sélectionner, ou collez (Ctrl+V)
               </p>
             </div>
             <p className="text-xs text-gray-500 font-light">
