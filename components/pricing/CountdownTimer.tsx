@@ -23,8 +23,8 @@ export function CountdownTimer() {
         const timestamp = parseInt(stored, 10);
         const elapsed = Date.now() - timestamp;
         
-        // If more than 24 hours have passed, reset
-        if (elapsed >= 24 * 60 * 60 * 1000) {
+        // If more than 48 hours have passed, reset
+        if (elapsed >= 48 * 60 * 60 * 1000) {
           const newTimestamp = Date.now();
           localStorage.setItem('pricingTimerStart', newTimestamp.toString());
           return newTimestamp;
@@ -40,15 +40,15 @@ export function CountdownTimer() {
     const initialTimestamp = getInitialTimestamp();
 
     const calculateTimeLeft = () => {
-      const endTime = initialTimestamp + (24 * 60 * 60 * 1000); // 24 hours
+      const endTime = initialTimestamp + (48 * 60 * 60 * 1000); // 48 hours
       const now = Date.now();
       const difference = endTime - now;
 
       if (difference <= 0) {
-        // Timer expired, reset
+        // Timer expired, reset to 48 hours and loop
         const newTimestamp = Date.now();
         localStorage.setItem('pricingTimerStart', newTimestamp.toString());
-        return { hours: 24, minutes: 0, seconds: 0 };
+        return { hours: 48, minutes: 0, seconds: 0 };
       }
 
       const hours = Math.floor(difference / (1000 * 60 * 60));
@@ -70,7 +70,7 @@ export function CountdownTimer() {
   if (!mounted) {
     return (
       <div className="flex items-center gap-3">
-        <TimeBox value={24} label="Heures" />
+        <TimeBox value={48} label="Heures" />
         <span className="text-white text-2xl font-light">:</span>
         <TimeBox value={0} label="Minutes" />
         <span className="text-white text-2xl font-light">:</span>
