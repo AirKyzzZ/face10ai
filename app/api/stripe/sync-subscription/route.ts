@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-config'
-import { stripe, TIER_CREDITS } from '@/lib/stripe'
+import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
         id: true,
         email: true,
         stripeCustomerId: true,
+        creditsRemaining: true,
+        creditsResetAt: true,
       },
     })
 
@@ -86,38 +88,31 @@ export async function POST(req: NextRequest) {
       tier = 'PRO'
     }
 
-    // Calculate credits reset date (1 month from now)
-    const creditsResetAt = new Date()
-    creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
+    // Only set creditsResetAt if it doesn't exist (first time setup)
+    const shouldSetResetDate = !user.creditsResetAt
+    const creditsResetAt = shouldSetResetDate ? (() => {
+      const date = new Date()
+      date.setMonth(date.getMonth() + 1)
+      return date
+    })() : undefined
 
-    // Update user subscription
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: user.id },
-        data: {
-          subscriptionTier: tier,
-          subscriptionStatus: subscription.status,
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscription.id,
-          subscriptionStartDate: new Date(subscription.created * 1000),
-          creditsRemaining: TIER_CREDITS[tier],
-          creditsResetAt,
-        },
-      }),
-      prisma.creditTransaction.create({
-        data: {
-          userId: user.id,
-          amount: TIER_CREDITS[tier],
-          type: 'subscription',
-          description: `Crédits ${tier} - Synchronisation manuelle`,
-        },
-      }),
-    ])
+    // Update user subscription metadata ONLY (preserve credits)
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        subscriptionTier: tier,
+        subscriptionStatus: subscription.status,
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: subscription.id,
+        subscriptionStartDate: new Date(subscription.created * 1000),
+        ...(creditsResetAt && { creditsResetAt }),
+      },
+    })
 
     return NextResponse.json({
       message: 'Abonnement synchronisé avec succès!',
       tier,
-      credits: TIER_CREDITS[tier],
+      credits: user.creditsRemaining,
       status: subscription.status,
     })
 
