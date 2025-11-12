@@ -29,22 +29,30 @@ export async function loadBeautyModels(): Promise<void> {
   modelsLoading = true
 
   try {
-    console.log('Loading AI beauty models...')
+    // Try to load models - will gracefully fail if they don't exist
+    // This is expected until models are trained and converted
+    const modelPromises = [
+      tf.loadLayersModel('/models/beauty_model_male/model.json').catch(() => null),
+      tf.loadLayersModel('/models/beauty_model_female/model.json').catch(() => null)
+    ]
     
-    // Load models in parallel
-    const [maleModelLoaded, femaleModelLoaded] = await Promise.all([
-      tf.loadLayersModel('/models/beauty_model_male/model.json'),
-      tf.loadLayersModel('/models/beauty_model_female/model.json')
-    ])
+    const [maleModelLoaded, femaleModelLoaded] = await Promise.all(modelPromises)
 
-    maleModel = maleModelLoaded
-    femaleModel = femaleModelLoaded
-
-    console.log('AI beauty models loaded successfully!')
+    if (maleModelLoaded && femaleModelLoaded) {
+      maleModel = maleModelLoaded
+      femaleModel = femaleModelLoaded
+      console.log('✅ AI beauty models loaded successfully!')
+    } else {
+      // Models don't exist yet - this is normal until training is complete
+      console.log('ℹ️ AI beauty models not found. Using geometric analysis (expected until models are trained).')
+      maleModel = null
+      femaleModel = null
+    }
   } catch (error) {
-    console.error('Error loading beauty models:', error)
-    console.warn('Falling back to geometric analysis')
-    // Models not available, will use geometric fallback
+    // Silently fall back to geometric analysis
+    // Models will be null, triggering fallback in analyzeFace
+    maleModel = null
+    femaleModel = null
   } finally {
     modelsLoading = false
   }
@@ -342,7 +350,7 @@ export async function analyzeFace(
       }
     } else {
       // Fall back to geometric analysis if models not loaded
-      console.log('AI models not loaded, using geometric analysis')
+      // This is expected if models haven't been trained yet
       finalScore = calculateGeometricScore(detection, gender, imageHash)
     }
 
