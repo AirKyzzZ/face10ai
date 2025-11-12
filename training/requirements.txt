@@ -1,0 +1,32 @@
+# Core Deep Learning (Apple Silicon / macOS)
+# Use tensorflow-macos for Apple Silicon Macs (M1/M2/M3)
+# Use tensorflow for Intel Macs or Linux
+tensorflow-macos>=2.13.0; platform_machine == 'arm64' and sys_platform == 'darwin'
+tensorflow-metal>=1.0.0; platform_machine == 'arm64' and sys_platform == 'darwin'
+tensorflow>=2.13.0; platform_machine != 'arm64' or sys_platform != 'darwin'
+
+# TensorFlow.js Conversion
+tensorflowjs>=4.11.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+scikit-learn>=1.3.0
+
+# Dataset Download
+gdown>=4.7.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Jupyter
+jupyter>=1.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# Utilities
+tqdm>=4.66.0
+

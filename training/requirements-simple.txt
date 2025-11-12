@@ -1,0 +1,35 @@
+# Simplified requirements for macOS Apple Silicon
+# This file uses newer versions with pre-built wheels to avoid compilation issues
+
+# Core Deep Learning (Apple Silicon optimized)
+tensorflow-macos>=2.13.0
+tensorflow-metal>=1.0.0
+
+# TensorFlow.js Conversion
+tensorflowjs>=4.11.0
+
+# Data Processing (newer versions with pre-built wheels)
+numpy>=1.26.0
+pandas>=2.0.3
+opencv-python>=4.8.0
+Pillow>=10.0.0
+scikit-learn>=1.3.2
+
+# Dataset Download
+gdown>=4.7.0
+
+# Visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Jupyter (optional - not needed for train.py)
+# jupyter>=1.0.0
+# ipykernel>=6.27.0
+# ipywidgets>=8.1.0
+
+# Utilities
+tqdm>=4.66.0
+
+# Note: Install with: pip install -r requirements-simple.txt
+# This will use pre-built wheels and avoid compilation issues
+

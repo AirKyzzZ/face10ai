@@ -1,4 +1,5 @@
 import * as faceapi from 'face-api.js'
+import * as tf from '@tensorflow/tfjs'
 
 export interface FaceAnalysis {
   symmetry: number
@@ -12,7 +13,122 @@ export interface RatingResult {
   breakdown: FaceAnalysis
 }
 
-// Seeded random number generator for consistency
+// Cache for loaded AI models
+let maleModel: tf.LayersModel | null = null
+let femaleModel: tf.LayersModel | null = null
+let modelsLoading = false
+
+/**
+ * Load AI beauty prediction models
+ */
+export async function loadBeautyModels(): Promise<void> {
+  if ((maleModel && femaleModel) || modelsLoading) {
+    return
+  }
+
+  modelsLoading = true
+
+  try {
+    console.log('Loading AI beauty models...')
+    
+    // Load models in parallel
+    const [maleModelLoaded, femaleModelLoaded] = await Promise.all([
+      tf.loadLayersModel('/models/beauty_model_male/model.json'),
+      tf.loadLayersModel('/models/beauty_model_female/model.json')
+    ])
+
+    maleModel = maleModelLoaded
+    femaleModel = femaleModelLoaded
+
+    console.log('AI beauty models loaded successfully!')
+  } catch (error) {
+    console.error('Error loading beauty models:', error)
+    console.warn('Falling back to geometric analysis')
+    // Models not available, will use geometric fallback
+  } finally {
+    modelsLoading = false
+  }
+}
+
+/**
+ * Extract and preprocess face region for AI model input
+ */
+async function preprocessFaceForModel(
+  imageElement: HTMLImageElement | HTMLCanvasElement,
+  detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>
+): Promise<tf.Tensor3D> {
+  // Get the bounding box of the face
+  const box = detection.detection.box
+  
+  // Create a canvas to extract the face region
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')!
+  
+  // Add padding around face (10%)
+  const padding = 0.1
+  const paddedWidth = box.width * (1 + 2 * padding)
+  const paddedHeight = box.height * (1 + 2 * padding)
+  const paddedX = Math.max(0, box.x - box.width * padding)
+  const paddedY = Math.max(0, box.y - box.height * padding)
+  
+  // Set canvas size to model input size (224x224)
+  canvas.width = 224
+  canvas.height = 224
+  
+  // Draw the face region
+  ctx.drawImage(
+    imageElement,
+    paddedX, paddedY, paddedWidth, paddedHeight,
+    0, 0, 224, 224
+  )
+  
+  // Convert canvas to tensor
+  const tensor = tf.browser.fromPixels(canvas)
+  
+  // Normalize to [0, 1] range
+  const normalized = tensor.toFloat().div(255.0)
+  
+  // Clean up
+  tensor.dispose()
+  
+  return normalized as tf.Tensor3D
+}
+
+/**
+ * Predict beauty score using AI model
+ */
+async function predictBeautyWithAI(
+  faceImage: tf.Tensor3D,
+  gender: string
+): Promise<number> {
+  const model = gender === 'homme' ? maleModel : femaleModel
+  
+  if (!model) {
+    throw new Error('Beauty model not loaded')
+  }
+  
+  // Add batch dimension
+  const input = faceImage.expandDims(0)
+  
+  try {
+    // Run inference
+    const prediction = model.predict(input) as tf.Tensor
+    const scoreArray = await prediction.data()
+    const score = scoreArray[0]
+    
+    // Clean up tensors
+    prediction.dispose()
+    input.dispose()
+    
+    // Ensure score is in valid range (0-10)
+    return Math.max(0, Math.min(10, score))
+  } catch (error) {
+    input.dispose()
+    throw error
+  }
+}
+
+// Seeded random number generator for consistency (used for fallback)
 function seededRandom(seed: string): number {
   let hash = 0
   for (let i = 0; i < seed.length; i++) {
@@ -202,41 +318,44 @@ export async function analyzeFace(
       throw new Error('Aucun visage détecté dans l\'image')
     }
 
-    // Calculate metrics
-    const symmetryScore = calculateFacialSymmetry(detection.landmarks)
-    const proportionsScore = calculateGoldenRatio(detection.landmarks)
-    const featuresScore = calculateFeatureQuality(detection.detection, detection.landmarks)
+    let finalScore: number
+    let usingAI = false
 
-    // Add deterministic variation based on image hash
-    const hashSeed = imageHash.substring(0, 16)
-    const hashVariation = seededRandom(hashSeed)
-    
-    // Calculate weighted average (0-100 scale)
-    const weightedAverage = (
-      symmetryScore * 0.35 +
-      proportionsScore * 0.35 +
-      featuresScore * 0.30
-    )
+    // Try to use AI model first
+    if (maleModel && femaleModel) {
+      try {
+        // Preprocess face for model input
+        const faceImage = await preprocessFaceForModel(imageElement, detection)
+        
+        // Get AI prediction
+        const aiScore = await predictBeautyWithAI(faceImage, gender)
+        
+        // Clean up tensor
+        faceImage.dispose()
+        
+        finalScore = aiScore
+        usingAI = true
+        console.log(`AI prediction: ${aiScore.toFixed(2)} for ${gender}`)
+      } catch (aiError) {
+        console.warn('AI prediction failed, falling back to geometric analysis:', aiError)
+        finalScore = calculateGeometricScore(detection, gender, imageHash)
+      }
+    } else {
+      // Fall back to geometric analysis if models not loaded
+      console.log('AI models not loaded, using geometric analysis')
+      finalScore = calculateGeometricScore(detection, gender, imageHash)
+    }
 
-    // Convert to 10-point scale with generous boost
-    // Formula: (score - 50) * 0.12 + 6.5
-    // This maps: 60 -> 6.7, 70 -> 7.9, 80 -> 9.1, 90 -> 10.3 (clamped to 10)
-    let baseScore = (weightedAverage - 50) * 0.12 + 6.5
-    
-    // Add positive variation based on hash (0 to +0.8)
-    const hashAdjustment = hashVariation * 0.8
-    
-    // Small gender variation (both slightly positive)
-    const genderAdjustment = gender === 'homme' ? 0.15 : 0.1
-    
-    // Final score with all adjustments
-    let finalScore = baseScore + hashAdjustment + genderAdjustment
-    
-    // Clamp between 5.5 and 10.0 (supermodels should hit 9-10)
-    finalScore = Math.max(5.5, Math.min(10.0, finalScore))
+    // Ensure score is in valid range
+    finalScore = Math.max(1.0, Math.min(10.0, finalScore))
 
     // Round to 1 decimal place
     const score = Math.round(finalScore * 10) / 10
+
+    // Calculate breakdown scores (for display purposes)
+    const symmetryScore = calculateFacialSymmetry(detection.landmarks)
+    const proportionsScore = calculateGoldenRatio(detection.landmarks)
+    const featuresScore = calculateFeatureQuality(detection.detection, detection.landmarks)
 
     return {
       score,
@@ -253,11 +372,53 @@ export async function analyzeFace(
   }
 }
 
-// Load models (call this once on app initialization)
+/**
+ * Fallback geometric calculation (backup method)
+ */
+function calculateGeometricScore(
+  detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>,
+  gender: string,
+  imageHash: string
+): number {
+  const symmetryScore = calculateFacialSymmetry(detection.landmarks)
+  const proportionsScore = calculateGoldenRatio(detection.landmarks)
+  const featuresScore = calculateFeatureQuality(detection.detection, detection.landmarks)
+
+  const hashSeed = imageHash.substring(0, 16)
+  const hashVariation = seededRandom(hashSeed)
+  
+  const weightedAverage = (
+    symmetryScore * 0.35 +
+    proportionsScore * 0.35 +
+    featuresScore * 0.30
+  )
+
+  let baseScore = (weightedAverage - 50) * 0.12 + 6.5
+  const hashAdjustment = hashVariation * 0.8
+  const genderAdjustment = gender === 'homme' ? 0.15 : 0.1
+  
+  let finalScore = baseScore + hashAdjustment + genderAdjustment
+  finalScore = Math.max(5.5, Math.min(10.0, finalScore))
+
+  return finalScore
+}
+
+/**
+ * Load all required models (face detection + AI beauty models)
+ * Call this once on app initialization
+ */
 export async function loadFaceApiModels(modelsPath = '/models'): Promise<void> {
+  console.log('Loading face detection models...')
+  
+  // Load face-api.js models
   await Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri(modelsPath),
     faceapi.nets.faceLandmark68Net.loadFromUri(modelsPath),
     faceapi.nets.faceRecognitionNet.loadFromUri(modelsPath),
   ])
+
+  console.log('Face detection models loaded!')
+  
+  // Load AI beauty models
+  await loadBeautyModels()
 }
