@@ -2,19 +2,48 @@
 
 # Model Conversion Script for TensorFlow.js
 # This script converts trained Keras models to TensorFlow.js format
+# Run this AFTER training is complete
 
 echo "=========================================="
 echo "Converting Beauty Recognition Models"
 echo "to TensorFlow.js Format"
 echo "=========================================="
 echo ""
+echo "ℹ️  This script converts trained models for use in the browser."
+echo ""
+
+# Activate virtual environment if it exists
+if [ -d "venv" ]; then
+    echo "Activating virtual environment..."
+    source venv/bin/activate
+    PYTHON_CMD="python"
+    # Use converter from venv
+    if [ -f "venv/bin/tensorflowjs_converter" ]; then
+        CONVERT_CMD="venv/bin/tensorflowjs_converter"
+    else
+        # Fallback to python module
+        CONVERT_CMD="$PYTHON_CMD -m tensorflowjs.converters.convert"
+    fi
+else
+    PYTHON_CMD="python3"
+    echo "Warning: Virtual environment not found. Using system Python."
+    # Try to find converter in system
+    if command -v tensorflowjs_converter &> /dev/null; then
+        CONVERT_CMD="tensorflowjs_converter"
+    else
+        CONVERT_CMD="$PYTHON_CMD -m tensorflowjs.converters.convert"
+    fi
+fi
 
 # Check if tensorflowjs is installed
-if ! python3 -c "import tensorflowjs" 2>/dev/null; then
+if ! $PYTHON_CMD -c "import tensorflowjs" 2>/dev/null; then
     echo "Error: tensorflowjs not found!"
     echo "Please install it with: pip install tensorflowjs"
+    echo "Or activate venv and install: source venv/bin/activate && pip install -r requirements-simple.txt"
     exit 1
 fi
+
+echo "Using converter: $CONVERT_CMD"
 
 # Check if models exist
 if [ ! -f "models/beauty_model_male.h5" ]; then
@@ -34,7 +63,7 @@ mkdir -p ../public/models/beauty_model_male
 mkdir -p ../public/models/beauty_model_female
 
 echo "Converting male model..."
-tensorflowjs_converter \
+$CONVERT_CMD \
     --input_format keras \
     --quantize_uint8 \
     models/beauty_model_male.h5 \
@@ -49,7 +78,7 @@ fi
 
 echo ""
 echo "Converting female model..."
-tensorflowjs_converter \
+$CONVERT_CMD \
     --input_format keras \
     --quantize_uint8 \
     models/beauty_model_female.h5 \
