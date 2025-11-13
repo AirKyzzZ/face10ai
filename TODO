@@ -9,6 +9,6 @@ Face recognition :
 ☐ Add the Cookie policy page and add it so the user accept them when creating an account for law protection (french + european law)
 
 Design : 
-☐ Replace "Satisfait ou Remboursé 30j" with something else because it's not applicable to my project
+☐ Replace "Satisfait ou Remboursé 30j" on the home page and pricing page with something else because it's not applicable to my project
 ☐ Edit the default template copyrighting for the bento section to be applicable to my project
 ✔ For the design i just imported a template and i need to use it for the project the goal is to use the entire home page of the template just replace the video player component with the actual product so chose men or women and then upload the picture the tempplate is located in the ez-saas folder that's an entire NextJS TS tailwind project and i need to use it as my base website and adapt everything for my project @done(25-11-11 19:39)

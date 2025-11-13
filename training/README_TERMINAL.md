@@ -10,6 +10,22 @@ source venv/bin/activate  # Activate virtual environment
 python train.py           # Run training script
 ```
 
+### Prevent Mac from Sleeping (Recommended)
+
+To prevent your Mac from sleeping during training (2-4 hours):
+
+```bash
+cd training
+./run_training_no_sleep.sh  # Automatically prevents sleep
+```
+
+Or use the Python wrapper:
+```bash
+cd training
+source venv/bin/activate
+python caffeinate_training.py
+```
+
 That's it! The script will:
 1. Download the dataset automatically
 2. Train the male model
