@@ -15,23 +15,21 @@ echo ""
 # Activate virtual environment if it exists
 if [ -d "venv" ]; then
     echo "Activating virtual environment..."
+    # shellcheck disable=SC1091
     source venv/bin/activate
     PYTHON_CMD="python"
-    # Use converter from venv
     if [ -f "venv/bin/tensorflowjs_converter" ]; then
-        CONVERT_CMD="venv/bin/tensorflowjs_converter"
+        CONVERTER_CMD=("venv/bin/tensorflowjs_converter")
     else
-        # Fallback to python module
-        CONVERT_CMD="$PYTHON_CMD -m tensorflowjs.converters.convert"
+        CONVERTER_CMD=("$PYTHON_CMD" "-m" "tensorflowjs.converters.convert")
     fi
 else
     PYTHON_CMD="python3"
     echo "Warning: Virtual environment not found. Using system Python."
-    # Try to find converter in system
     if command -v tensorflowjs_converter &> /dev/null; then
-        CONVERT_CMD="tensorflowjs_converter"
+        CONVERTER_CMD=("tensorflowjs_converter")
     else
-        CONVERT_CMD="$PYTHON_CMD -m tensorflowjs.converters.convert"
+        CONVERTER_CMD=("$PYTHON_CMD" "-m" "tensorflowjs.converters.convert")
     fi
 fi
 
@@ -43,7 +41,7 @@ if ! $PYTHON_CMD -c "import tensorflowjs" 2>/dev/null; then
     exit 1
 fi
 
-echo "Using converter: $CONVERT_CMD"
+echo "Using converter: ${CONVERTER_CMD[*]}"
 
 # Check if models exist
 if [ ! -f "models/beauty_model_male.h5" ]; then
@@ -63,9 +61,9 @@ mkdir -p ../public/models/beauty_model_male
 mkdir -p ../public/models/beauty_model_female
 
 echo "Converting male model..."
-$CONVERT_CMD \
+"${CONVERTER_CMD[@]}" \
     --input_format keras \
-    --quantize_uint8 \
+    --quantization_bytes 1 \
     models/beauty_model_male.h5 \
     ../public/models/beauty_model_male/
 
@@ -78,9 +76,9 @@ fi
 
 echo ""
 echo "Converting female model..."
-$CONVERT_CMD \
+"${CONVERTER_CMD[@]}" \
     --input_format keras \
-    --quantize_uint8 \
+    --quantization_bytes 1 \
     models/beauty_model_female.h5 \
     ../public/models/beauty_model_female/
 
