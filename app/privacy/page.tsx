@@ -21,7 +21,7 @@ export default function PrivacyPage() {
               1. Collecte des Données
             </h2>
             <p>
-              combiensur10.fr collecte uniquement les données nécessaires au fonctionnement du service :
+              face10ai.com collecte uniquement les données nécessaires au fonctionnement du service :
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>Email et mot de passe (pour les comptes utilisateurs)</li>
@@ -95,10 +95,10 @@ export default function PrivacyPage() {
             <p>
               Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, contactez-nous à{' '}
               <a 
-                href="mailto:contact@combiensur10.fr" 
+                href="mailto:contact@face10ai.com" 
                 className="text-[#8096D2] hover:underline"
               >
-                contact@combiensur10.fr
+                contact@face10ai.com
               </a>
             </p>
           </div>

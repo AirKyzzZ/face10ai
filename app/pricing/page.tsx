@@ -216,7 +216,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="w-full border-t border-[#333B4F] py-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
-          <p>Tous droits réservés © 2025 combiensur10.fr</p>
+          <p>Tous droits réservés © 2025 face10ai.com</p>
         </div>
       </footer>
     </div>

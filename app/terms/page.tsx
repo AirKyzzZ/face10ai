@@ -21,14 +21,14 @@ export default function TermsPage() {
               1. Acceptation des Conditions
             </h2>
             <p>
-              En utilisant combiensur10.fr, vous acceptez les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
+              En utilisant face10ai.com, vous acceptez les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.
             </p>
 
             <h2 className="text-2xl font-light text-white mt-8 mb-4">
               2. Description du Service
             </h2>
             <p>
-              combiensur10.fr est un service d'analyse faciale basé sur l'intelligence artificielle qui évalue l'attractivité selon des critères scientifiques. Le service est fourni à titre informatif et divertissant uniquement.
+              face10ai.com est un service d'analyse faciale basé sur l'intelligence artificielle qui évalue l'attractivité selon des critères scientifiques. Le service est fourni à titre informatif et divertissant uniquement.
             </p>
 
             <h2 className="text-2xl font-light text-white mt-8 mb-4">
@@ -62,7 +62,7 @@ export default function TermsPage() {
               5. Limitation de Responsabilité
             </h2>
             <p>
-              Les résultats fournis par notre IA sont à titre informatif uniquement et ne constituent pas une évaluation objective de votre attractivité. combiensur10.fr ne peut être tenu responsable de :
+              Les résultats fournis par notre IA sont à titre informatif uniquement et ne constituent pas une évaluation objective de votre attractivité. face10ai.com ne peut être tenu responsable de :
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li>L'interprétation ou l'utilisation des résultats</li>
@@ -75,7 +75,7 @@ export default function TermsPage() {
               6. Propriété Intellectuelle
             </h2>
             <p>
-              Tous les contenus, logos, et technologies de combiensur10.fr sont protégés par les droits d'auteur et appartiennent à leurs propriétaires respectifs.
+              Tous les contenus, logos, et technologies de face10ai.com sont protégés par les droits d'auteur et appartiennent à leurs propriétaires respectifs.
             </p>
 
             <h2 className="text-2xl font-light text-white mt-8 mb-4">
@@ -105,10 +105,10 @@ export default function TermsPage() {
             <p>
               Pour toute question concernant ces conditions, contactez-nous à{' '}
               <a 
-                href="mailto:contact@combiensur10.fr" 
+                href="mailto:contact@face10ai.com" 
                 className="text-[#8096D2] hover:underline"
               >
-                contact@combiensur10.fr
+                contact@face10ai.com
               </a>
             </p>
           </div>

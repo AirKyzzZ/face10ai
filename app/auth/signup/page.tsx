@@ -95,7 +95,7 @@ export default function SignUpPage() {
             Créer un compte
           </h1>
           <p className="text-gray-400 text-center mb-8 font-light">
-            Rejoignez combiensur10 et obtenez 5 crédits gratuits
+            Rejoignez face10ai et obtenez 5 crédits gratuits
           </p>
 
           {referralCode && (

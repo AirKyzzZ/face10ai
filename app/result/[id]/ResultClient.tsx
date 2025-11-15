@@ -191,7 +191,7 @@ export default function ResultClient({ rating }: ResultClientProps) {
               {copied ? 'Copié !' : 'Copier le lien'}
             </button>
             <a
-              href={`https://twitter.com/intent/tweet?text=J'ai obtenu ${rating.score}/10 sur combiensur10.fr !&url=${shareUrl}`}
+              href={`https://twitter.com/intent/tweet?text=J'ai obtenu ${rating.score}/10 sur face10ai.com !&url=${shareUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 border border-blue-500/50 rounded-lg text-blue-300 hover:bg-blue-600/30 transition-colors"
@@ -223,7 +223,7 @@ export default function ResultClient({ rating }: ResultClientProps) {
               🎁 Parrainez vos amis et gagnez des crédits !
             </h3>
             <p className="text-sm text-gray-300 mb-4">
-              Invitez vos amis à essayer combiensur10.fr et recevez 10 crédits gratuits pour chaque inscription !
+              Invitez vos amis à essayer face10ai.com et recevez 10 crédits gratuits pour chaque inscription !
             </p>
             <div className="flex gap-3">
               <input

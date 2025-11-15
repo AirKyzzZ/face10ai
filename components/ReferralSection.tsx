@@ -26,7 +26,7 @@ export function ReferralSection({
   }
 
   const shareOnTwitter = () => {
-    const text = `Découvre ta note d'attractivité sur Combien sur 10 ! Utilise mon lien de parrainage pour obtenir des crédits gratuits :`
+    const text = `Découvre ta note d'attractivité sur Face 10 AI ! Utilise mon lien de parrainage pour obtenir des crédits gratuits :`
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       text
     )}&url=${encodeURIComponent(referralUrl)}`
@@ -34,7 +34,7 @@ export function ReferralSection({
   }
 
   const shareOnWhatsApp = () => {
-    const text = `Découvre ta note d'attractivité sur Combien sur 10 ! Utilise mon lien de parrainage : ${referralUrl}`
+    const text = `Découvre ta note d'attractivité sur Face 10 AI ! Utilise mon lien de parrainage : ${referralUrl}`
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`
     window.open(whatsappUrl, '_blank')
   }

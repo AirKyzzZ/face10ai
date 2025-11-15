@@ -10,9 +10,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "combiensur10.fr - Analyse IA de votre attractivité faciale",
+  title: "face10ai.com - Analyse IA de votre attractivité faciale",
   description:
-    "Découvrez votre note d'attractivité basée sur la symétrie, le nombre d'or et des critères scientifiques",
+    "Découvrez votre note d'attractivité avec face10ai, basée sur la symétrie, le nombre d'or et des critères scientifiques",
 };
 
 export default function RootLayout({

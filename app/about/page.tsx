@@ -10,12 +10,12 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="bg-gradient-to-br from-[#2E3139] to-[#1E2536] border-[2px] border-[#5B698B] rounded-2xl p-8 md:p-12">
           <h1 className="text-4xl font-light text-white mb-6">
-            À propos de combiensur10.fr
+            À propos de face10ai
           </h1>
 
           <div className="space-y-6 text-gray-300 font-light leading-relaxed">
             <p>
-              <strong className="text-white">combiensur10.fr</strong> est une plateforme d'analyse faciale basée sur l'intelligence artificielle qui évalue l'attractivité selon des critères scientifiques reconnus.
+              <strong className="text-white">face10ai</strong> est une plateforme d'analyse faciale basée sur l'intelligence artificielle qui évalue l'attractivité selon des critères scientifiques reconnus.
             </p>
 
             <h2 className="text-2xl font-light text-white mt-8 mb-4">
@@ -61,10 +61,10 @@ export default function AboutPage() {
             <p>
               Pour toute question ou suggestion, n'hésitez pas à nous contacter à{' '}
               <a 
-                href="mailto:contact@combiensur10.fr" 
+                href="mailto:contact@face10ai.com" 
                 className="text-[#8096D2] hover:underline"
               >
-                contact@combiensur10.fr
+                contact@face10ai.com
               </a>
             </p>
           </div>

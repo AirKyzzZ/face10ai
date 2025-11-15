@@ -53,7 +53,7 @@ export default function SignInPage() {
             Connexion
           </h1>
           <p className="text-gray-400 text-center mb-8 font-light">
-            Connectez-vous à votre compte combiensur10
+            Connectez-vous à votre compte face10ai
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -44,7 +44,7 @@ const Header = () => {
           transition={{ duration: 0.5 }}
         >
           <Link href="/" className="text-2xl text-white">
-            combien<span className="font-semibold">sur10</span>.fr
+            face<span className="font-semibold">10ai</span>.com
           </Link>
         </motion.div>
 

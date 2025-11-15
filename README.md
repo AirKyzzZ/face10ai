@@ -1,4 +1,4 @@
-# Combien sur 10 - Face Attractiveness Rating Platform
+# face10ai - Face Attractiveness Rating Platform
 
 A modern SaaS application that analyzes facial attractiveness using AI, built with Next.js, TypeScript, and Tailwind CSS.
 
@@ -28,7 +28,7 @@ Before you begin, ensure you have:
 
 ```bash
 git clone <your-repo-url>
-cd combiensur10
+cd face10ai
 ```
 
 2. **Install dependencies**
@@ -43,7 +43,7 @@ Create a `.env.local` file in the root directory:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/combiensur10?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/face10ai?schema=public"
 
 # Supabase (if using Supabase)
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -110,7 +110,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## 🏗️ Project Structure
 
 ```
-combiensur10/
+face10ai/
 ├── app/                          # Next.js app directory
 │   ├── api/                      # API routes
 │   │   ├── auth/[...nextauth]/   # NextAuth configuration
@@ -229,7 +229,7 @@ npx prisma migrate deploy
 Make sure to set all environment variables in your production environment:
 
 - `DATABASE_URL`: Your production database connection string
-- `NEXTAUTH_URL`: Your production domain (e.g., https://combiensur10.fr)
+- `NEXTAUTH_URL`: Your production domain (e.g., https://face10ai.com)
 - `NEXTAUTH_SECRET`: Generate a new secret for production
 - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: OAuth credentials
 - `NEXT_PUBLIC_APP_URL`: Your production URL
@@ -265,7 +265,7 @@ This project is proprietary and confidential.
 
 ## 📞 Support
 
-For support, email contact@combiensur10.fr
+For support, email contact@face10ai.com
 
 ## 🎉 Acknowledgments
 

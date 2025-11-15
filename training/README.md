@@ -1,6 +1,6 @@
 # Beauty Recognition Model Training
 
-This directory contains the training pipeline for the AI-powered beauty recognition system used in combiensur10.fr.
+This directory contains the training pipeline for the AI-powered beauty recognition system used in face10ai.com.
 
 ## Overview
 
@@ -177,5 +177,5 @@ After training:
 
 ## License
 
-This training pipeline is for the combiensur10.fr project. Dataset licenses apply separately.
+This training pipeline is for the face10ai.com project. Dataset licenses apply separately.
 

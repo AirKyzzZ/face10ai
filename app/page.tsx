@@ -207,11 +207,11 @@ export default function HomePage() {
               onHoverStart={() => setIsHovered(true)}
               onHoverEnd={() => setIsHovered(false)}
             >
-              {"combiensur10.fr".split("").map((char, index) => (
+              {"face10ai.com".split("").map((char, index) => (
                 <motion.span
                   key={index}
                   className={`inline-block ${
-                    char === "s" || char === "u" || char === "r"
+                    char === "1" || char === "0"
                       ? "font-semibold"
                       : ""
                   }`}
@@ -607,7 +607,7 @@ export default function HomePage() {
 
               <div className="mt-8 flex flex-row gap-3 items-end">
                 <Mail className="w-6 h-6 text-[#8096D2]" />
-                <p className="font-light text-sm">contact@combiensur10.fr</p>
+                <p className="font-light text-sm">contact@face10ai.com</p>
               </div>
               <div className="mt-8 flex flex-row gap-3 items-end">
                 <MapPin className="w-6 h-6 text-[#8096D2]" />
@@ -703,11 +703,11 @@ export default function HomePage() {
             <motion.span
               className="text-[#d0d2d8] bp6:text-5xl text-8xl font-light relative flex space-x-1 justify-center"
             >
-              {"combiensur10.fr".split("").map((char, index) => (
+              {"face10ai.com".split("").map((char, index) => (
                 <motion.span
                   key={index}
                   className={`inline-block ${
-                    char === "s" || char === "u" || char === "r"
+                    char === "1" || char === "0"
                       ? "font-semibold"
                       : ""
                   }`}
@@ -768,15 +768,15 @@ export default function HomePage() {
             <div className="flex flex-row w-[90%] justify-evenly bp2:flex-col-reverse bp2:items-center bp2:gap-8">
               <div className="flex flex-col items-center gap-4">
                 <h2 className="text-[#C5CDE3] bp3:text-5xl text-7xl font-light">
-                  combien<span className="font-bold">sur10</span>.fr
+                  face10<span className="font-bold">ai.com</span>
                 </h2>
                 <div className="flex flex-row gap-3 items-end">
                   <Mail className="w-4 h-4 text-[#8096D2]" />
                   <a
-                    href="mailto:contact@combiensur10.fr"
+                    href="mailto:contact@face10ai.com"
                     className="font-light text-[#C5CDE3] hover:text-[#8096D2] transition-colors underline text-sm"
                   >
-                    contact@combiensur10.fr
+                    contact@face10ai.com
                   </a>
                 </div>
                 <div className="flex flex-row gap-3 items-end">
@@ -845,7 +845,7 @@ export default function HomePage() {
         </div>
 
         <div className="w-full flex justify-center text-gray-400 text-sm font-light mb-3 items-center">
-          <p>Tous droits réservés &copy; 2025 combiensur10.fr</p>
+          <p>Tous droits réservés &copy; 2025 face10ai.com</p>
         </div>
       </div>
     </div>

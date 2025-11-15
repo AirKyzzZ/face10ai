@@ -7,7 +7,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-lg font-bold text-purple-600 mb-4">
-              Combien sur 10
+              face10ai
             </h3>
             <p className="text-gray-600 text-sm">
               Découvrez votre note d'attractivité grâce à notre algorithme IA avancé.
@@ -55,15 +55,15 @@ export function Footer() {
             <h4 className="font-semibold text-gray-900 mb-4">Contact</h4>
             <p className="text-gray-600 text-sm">
               Besoin d'aide ?<br />
-              <a href="mailto:contact@combiensur10.fr" className="text-purple-600 hover:underline">
-                contact@combiensur10.fr
+              <a href="mailto:contact@face10ai.com" className="text-purple-600 hover:underline">
+                contact@face10ai.com
               </a>
             </p>
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">
-          <p>&copy; {new Date().getFullYear()} Combien sur 10. Tous droits réservés.</p>
+          <p>&copy; {new Date().getFullYear()} face10ai. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

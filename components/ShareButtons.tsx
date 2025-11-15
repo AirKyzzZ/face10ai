@@ -8,7 +8,7 @@ interface ShareButtonsProps {
 }
 
 export function ShareButtons({ score, url }: ShareButtonsProps) {
-  const shareText = `J'ai obtenu ${score}/10 sur Combien sur 10 ! Découvre ta note d'attractivité :`
+  const shareText = `J'ai obtenu ${score}/10 sur Face 10 AI ! Découvre ta note d'attractivité :`
 
   const shareOnTwitter = () => {
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
