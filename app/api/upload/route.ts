@@ -17,18 +17,10 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('image') as File
-    const gender = formData.get('gender') as string
 
     if (!file) {
       return NextResponse.json(
         { error: 'Aucune image fournie' },
-        { status: 400 }
-      )
-    }
-
-    if (!gender || !['homme', 'femme'].includes(gender)) {
-      return NextResponse.json(
-        { error: 'Genre invalide' },
         { status: 400 }
       )
     }
@@ -122,7 +114,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       imageHash,
       imageData: dataUrl,
-      gender,
       userId,
     })
   } catch (error) {

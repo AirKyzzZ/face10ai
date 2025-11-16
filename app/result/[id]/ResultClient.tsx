@@ -93,9 +93,6 @@ export default function ResultClient({ rating }: ResultClientProps) {
             </motion.div>
             
             <p className="text-xl text-white font-light">{getScoreMessage(rating.score)}</p>
-            <p className="text-sm text-gray-400 mt-2">
-              Genre: {rating.gender === 'homme' ? '👨 Homme' : '👩 Femme'}
-            </p>
           </div>
         </motion.div>
 

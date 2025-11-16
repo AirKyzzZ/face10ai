@@ -11,9 +11,9 @@ import {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { imageHash, gender, score, breakdown } = body
+    const { imageHash, score, breakdown } = body
 
-    if (!imageHash || !gender || !score || !breakdown) {
+    if (!imageHash || !score || !breakdown) {
       return NextResponse.json(
         { error: 'Données manquantes' },
         { status: 400 }
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId,
         imageHash,
-        gender,
+        gender: 'neutral',
         score: parseFloat(score),
         breakdown,
       },

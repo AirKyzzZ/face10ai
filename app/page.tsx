@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import * as faceapi from 'face-api.js'
 
 import Header from "@/components/Header";
-import { GenderSelector } from '@/components/GenderSelector'
 import { ImageUploader } from '@/components/ImageUploader'
 import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating'
 import { HoverBorderGradient } from "@/components/template/FramerButton";
@@ -36,7 +35,6 @@ export default function HomePage() {
   const searchParams = useSearchParams()
   const { data: session } = useSession()
   
-  const [selectedGender, setSelectedGender] = useState<'homme' | 'femme' | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [modelsLoaded, setModelsLoaded] = useState(false)
@@ -77,7 +75,7 @@ export default function HomePage() {
   }, [searchParams])
 
   const handleAnalyze = async () => {
-    if (!selectedFile || !selectedGender || !modelsLoaded) return
+    if (!selectedFile || !modelsLoaded) return
 
     setIsLoading(true)
     setError(null)
@@ -86,7 +84,6 @@ export default function HomePage() {
       // Upload image and get hash
       const formData = new FormData()
       formData.append('image', selectedFile)
-      formData.append('gender', selectedGender)
 
       const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
@@ -119,7 +116,7 @@ export default function HomePage() {
         img.onerror = reject
       })
 
-      const result = await analyzeFace(img, selectedGender, imageHash)
+      const result = await analyzeFace(img, imageHash)
 
       // Save analysis result
       const analyzeResponse = await fetch('/api/analyze', {
@@ -127,7 +124,6 @@ export default function HomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageHash,
-          gender: selectedGender,
           score: result.score,
           breakdown: result.breakdown,
         }),
@@ -278,32 +274,20 @@ export default function HomePage() {
 
           {/* Product Interface */}
           <div className="relative z-10 w-full space-y-8">
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <h2 className="text-2xl font-light text-white mb-6 text-center">
-                Sélectionnez votre genre
+                Téléchargez votre photo
               </h2>
-              <GenderSelector
-                selectedGender={selectedGender}
-                onSelect={setSelectedGender}
+              <ImageUploader
+                onImageSelect={setSelectedFile}
+                disabled={isLoading}
               />
-            </div>
+            </motion.div>
 
-            {selectedGender && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <h2 className="text-2xl font-light text-white mb-6 text-center">
-                  Téléchargez votre photo
-                </h2>
-                <ImageUploader
-                  onImageSelect={setSelectedFile}
-                  disabled={isLoading}
-                />
-              </motion.div>
-            )}
-
-            {selectedFile && selectedGender && (
+            {selectedFile && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -12,8 +12,9 @@ tensorflow-metal==1.0.0
 # TensorFlow.js Conversion
 tensorflowjs==4.11.0
 
-# Data Processing (using newer versions with pre-built wheels for Apple Silicon)
-numpy>=1.26.0,<2.0.0
+# Data Processing (versions compatible with tensorflow-macos==2.13.0)
+# TF 2.13 requires numpy<=1.24.3 and >=1.22
+numpy>=1.22.0,<=1.24.3
 pandas>=2.0.3
 opencv-python>=4.8.0
 Pillow>=10.0.0

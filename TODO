@@ -2,6 +2,7 @@ Face recognition :
 
 ✔ Option to paste picture on the image uploader
 ✔ Make the countdown timer loop 48h everytime it gets to 0 it resets to 48h
+☐ Make subscription annnualy optional make it default when viewing the pricing page or section and theres a discount if the users pays 12 months at once show it and implement stripe
 ☐ Make a big complete prompt for chatgpt like he dosn't know a word about the project and make him generate the logo of the app in a square format for it to be in the browser bar 
 ☐ And a second logo in a rectangular format for it to be in the navbar
 ☐ Add the Terms and conditions page and add it so the user accept them when creating an account for law protection (french + european law)

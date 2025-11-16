@@ -13,9 +13,8 @@ export interface RatingResult {
   breakdown: FaceAnalysis
 }
 
-// Cache for browser-side AI models (TensorFlow.js)
-let maleModel: tf.LayersModel | null = null
-let femaleModel: tf.LayersModel | null = null
+// Cache for browser-side AI model (TensorFlow.js)
+let beautyModel: tf.LayersModel | null = null
 let modelsLoading = false
 
 /**
@@ -28,37 +27,35 @@ export async function loadBeautyModels(): Promise<void> {
   // Only run in the browser
   if (typeof window === 'undefined') return
 
-  if ((maleModel && femaleModel) || modelsLoading) {
+  if (beautyModel || modelsLoading) {
     return
   }
 
   modelsLoading = true
 
   try {
-    // Try to load models - will gracefully fail if they don't exist
-    const modelPromises = [
-      tf.loadLayersModel('/models/beauty_model_male/model.json').catch(() => null),
-      tf.loadLayersModel('/models/beauty_model_female/model.json').catch(() => null),
-    ]
+    // Try to load single neutral model - will log detailed errors if it doesn't exist or fails to load
+    beautyModel = await tf
+      .loadLayersModel('/models/model.json')
+      .catch((error) => {
+        console.error(
+          'Failed to load beauty model from /models/model.json',
+          error
+        )
+        return null
+      })
 
-    const [maleModelLoaded, femaleModelLoaded] = await Promise.all(modelPromises)
-
-    if (maleModelLoaded && femaleModelLoaded) {
-      maleModel = maleModelLoaded
-      femaleModel = femaleModelLoaded
-      console.log('✅ Browser AI beauty models loaded successfully!')
+    if (beautyModel) {
+      console.log('✅ Browser AI beauty model loaded successfully!')
     } else {
-      // Models don't exist yet - this is normal until training is complete
+      // Model doesn't exist yet or failed to load - AI scoring will be disabled
       console.log(
-        'ℹ️ Browser AI beauty models not found. Face scoring via AI will be disabled until models are trained.'
+        'ℹ️ Browser AI beauty model not available. Face scoring via AI is disabled until the model is available and loads correctly.'
       )
-      maleModel = null
-      femaleModel = null
     }
   } catch (error) {
-    // Silently disable AI scoring if something goes wrong
-    maleModel = null
-    femaleModel = null
+    // Disable AI scoring if something goes wrong and log the underlying error
+    beautyModel = null
     console.warn('Failed to load browser AI models. Face scoring via AI is disabled.', error)
   } finally {
     modelsLoading = false
@@ -113,12 +110,9 @@ async function preprocessFaceForModel(
  * Predict beauty score using browser-side AI model (TensorFlow.js).
  */
 async function predictBeautyWithAI(
-  faceImage: tf.Tensor3D,
-  gender: string
+  faceImage: tf.Tensor3D
 ): Promise<number> {
-  const model = gender === 'homme' ? maleModel : femaleModel
-  
-  if (!model) {
+  if (!beautyModel) {
     throw new Error('Beauty model not loaded')
   }
   
@@ -127,7 +121,7 @@ async function predictBeautyWithAI(
   
   try {
     // Run inference
-    const prediction = model.predict(input) as tf.Tensor
+    const prediction = beautyModel.predict(input) as tf.Tensor
     const scoreArray = await prediction.data()
     const score = scoreArray[0]
     
@@ -145,7 +139,6 @@ async function predictBeautyWithAI(
 
 export async function analyzeFace(
   imageElement: HTMLImageElement | HTMLCanvasElement,
-  gender: string,
   imageHash: string
 ): Promise<RatingResult> {
   try {
@@ -158,15 +151,20 @@ export async function analyzeFace(
       throw new Error('Aucun visage détecté dans l\'image')
     }
 
-    if (!maleModel || !femaleModel) {
-      throw new Error(
-        'Les modèles IA de notation de beauté ne sont pas chargés. Veuillez réessayer plus tard.'
-      )
+    // Ensure AI model is loaded (lazy-load on first use)
+    if (!beautyModel) {
+      await loadBeautyModels()
+
+      if (!beautyModel) {
+        throw new Error(
+          'Le modèle IA de notation de beauté n\'est pas chargé. Veuillez réessayer plus tard.'
+        )
+      }
     }
 
-    // Always use the trained AI models for scoring
+    // Always use the trained AI model for scoring
     const faceImage = await preprocessFaceForModel(imageElement, detection)
-    const aiScore = await predictBeautyWithAI(faceImage, gender)
+    const aiScore = await predictBeautyWithAI(faceImage)
 
     // Clean up tensor
     faceImage.dispose()
@@ -195,37 +193,6 @@ export async function analyzeFace(
     console.error('Error analyzing face:', error)
     throw error
   }
-}
-
-/**
- * Fallback geometric calculation (backup method)
- */
-function calculateGeometricScore(
-  detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>,
-  gender: string,
-  imageHash: string
-): number {
-  const symmetryScore = calculateFacialSymmetry(detection.landmarks)
-  const proportionsScore = calculateGoldenRatio(detection.landmarks)
-  const featuresScore = calculateFeatureQuality(detection.detection, detection.landmarks)
-
-  const hashSeed = imageHash.substring(0, 16)
-  const hashVariation = seededRandom(hashSeed)
-  
-  const weightedAverage = (
-    symmetryScore * 0.35 +
-    proportionsScore * 0.35 +
-    featuresScore * 0.30
-  )
-
-  let baseScore = (weightedAverage - 50) * 0.12 + 6.5
-  const hashAdjustment = hashVariation * 0.8
-  const genderAdjustment = gender === 'homme' ? 0.15 : 0.1
-  
-  let finalScore = baseScore + hashAdjustment + genderAdjustment
-  finalScore = Math.max(5.5, Math.min(10.0, finalScore))
-
-  return finalScore
 }
 
 /**

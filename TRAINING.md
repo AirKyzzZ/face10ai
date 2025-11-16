@@ -39,7 +39,6 @@ npm run dev
    - TensorFlow.js added to Next.js app (`@tensorflow/tfjs` in `package.json`)
    - AI-powered face rating (`lib/face-rating.ts` updated)
    - Gender-specific model loading (male/female)
-   - Automatic fallback to geometric analysis
    - Face preprocessing for model input (224x224)
 
 3. **Architecture**
@@ -126,7 +125,7 @@ public/models/
 
 1. **Training is required:** The system is ready, but you need to train the models locally
 2. **GPU recommended:** Training on CPU will take 8-12 hours vs 2-4 hours on GPU
-3. **Fallback included:** If models aren't loaded, system falls back to geometric analysis
+3. **No fallback:** If models aren't loaded or fail to load, face scoring will be unavailable until this is fixed
 4. **Two models needed:** Train both male and female models for best results
 5. **Browser compatibility:** Uses WebGL acceleration, works on modern browsers
 

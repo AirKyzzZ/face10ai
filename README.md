@@ -148,22 +148,9 @@ In one terminal, start the Next.js app:
 npm run dev
 ```
 
-In another terminal, start the Python API (if using AttractiveNet):
-
-```bash
-npm run api:python
-```
-
-Or manually:
-
-```bash
-cd training
-python inference_api.py
-```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-**Note**: The AttractiveNet API runs on `http://localhost:8000` by default. Make sure both services are running if you want to use AI-powered scoring. The app will gracefully fall back to geometric analysis if the API is unavailable.
+**Note**: Face scoring now runs **entirely in the browser** using TensorFlow.js models (`public/models/beauty_model_male` and `public/models/beauty_model_female`). There is **no geometric fallback** and no separate AttractiveNet API process; if the AI models are missing or fail to load, scoring will be unavailable until this is fixed.
 
 ## 🏗️ Project Structure
 

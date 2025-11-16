@@ -45,13 +45,13 @@ public/models/
 ## Current Status
 
 - ✅ Face detection models: Installed and working
-- ⏳ AI beauty models: Not trained yet (will use geometric analysis as fallback)
+- ⏳ AI beauty models: Not trained yet (AI-based scoring will be disabled until models are available)
 
-## Fallback Behavior
+## Behavior When Models Are Missing
 
-If AI beauty models are not found, the system automatically falls back to geometric analysis. This is normal until models are trained.
+If AI beauty models are not found or fail to load, **face scoring will be disabled** and the UI will show an error explaining that beauty models are not loaded. There is **no geometric fallback** anymore; everything is driven by the trained AI models.
 
-## After Training
+## After Training and Conversion
 
-Once models are trained and converted, they will automatically be used for beauty prediction, providing more accurate results than geometric analysis.
+Once models are trained and converted, they will automatically be used for beauty prediction in the browser via TensorFlow.js.
 
