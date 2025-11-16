@@ -9,7 +9,7 @@ import * as faceapi from 'face-api.js'
 
 import Header from "@/components/Header";
 import { ImageUploader } from '@/components/ImageUploader'
-import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating'
+import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating-api'
 import { HoverBorderGradient } from "@/components/template/FramerButton";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import LogoMarquee from "@/components/template/marquee";
@@ -52,17 +52,20 @@ export default function HomePage() {
     })
   }
 
-  // Load face-api models
+  // Load face detection models (client-side, lightweight)
   useEffect(() => {
     const loadModels = async () => {
       try {
+        console.log('Loading face detection models...')
         await loadFaceApiModels('/models')
+        console.log('✅ Face detection ready!')
         setModelsLoaded(true)
       } catch (err) {
-        console.error('Error loading models:', err)
-        setError('Erreur lors du chargement des modèles IA')
+        console.error('Error loading face detection models:', err)
+        setError('Erreur lors du chargement des modèles de détection')
       }
     }
+    
     loadModels()
   }, [])
 

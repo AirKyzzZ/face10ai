@@ -16,6 +16,80 @@ export interface RatingResult {
 // Cache for browser-side AI model (TensorFlow.js)
 let beautyModel: tf.LayersModel | null = null
 let modelsLoading = false
+let tfOpLambdaRegistered = false
+
+/**
+ * Register TFOpLambda layer properly.
+ * The model has TFOpLambda layers for preprocessing:
+ * - tf.math.truediv: divides input by 127.5
+ * - tf.math.subtract: subtracts 1.0
+ * We implement these operations correctly in the custom layer.
+ */
+function registerTFOpLambdaLayer() {
+  // Only register once to avoid conflicts
+  if (tfOpLambdaRegistered) {
+    return
+  }
+
+  try {
+    // @ts-ignore - TFOpLambda is not in the TypeScript definitions
+    class TFOpLambda extends tf.layers.Layer {
+      private functionName: string
+      private y: number | undefined
+
+      constructor(config?: any) {
+        super(config || {})
+        this.functionName = config?.function || ''
+        this.y = config?.y
+      }
+
+      call(inputs: tf.Tensor | tf.Tensor[], kwargs?: any): tf.Tensor | tf.Tensor[] {
+        return tf.tidy(() => {
+          // Get the actual tensor
+          const input = Array.isArray(inputs) ? inputs[0] : inputs
+          
+          // Execute the appropriate TensorFlow operation
+          if (this.functionName === 'math.truediv' || this.name.includes('truediv')) {
+            // Division operation: input / y
+            const divisor = this.y || 127.5
+            return tf.div(input, divisor)
+          } else if (this.functionName === 'math.subtract' || this.name.includes('subtract')) {
+            // Subtraction operation: input - y
+            const subtrahend = this.y || 1.0
+            return tf.sub(input, subtrahend)
+          }
+          
+          // Default: pass through
+          return input
+        })
+      }
+
+      static get className() {
+        return 'TFOpLambda'
+      }
+
+      getConfig(): any {
+        const config = super.getConfig()
+        return {
+          ...config,
+          function: this.functionName,
+          y: this.y
+        }
+      }
+
+      computeOutputShape(inputShape: tf.Shape | tf.Shape[]): tf.Shape | tf.Shape[] {
+        return inputShape
+      }
+    }
+
+    // Register the custom layer
+    tf.serialization.registerClass(TFOpLambda)
+    tfOpLambdaRegistered = true
+    console.log('✅ TFOpLambda layer registered successfully')
+  } catch (error) {
+    console.warn('Failed to register TFOpLambda layer:', error)
+  }
+}
 
 /**
  * Load AI beauty prediction models (browser-side TensorFlow.js).
@@ -34,7 +108,12 @@ export async function loadBeautyModels(): Promise<void> {
   modelsLoading = true
 
   try {
-    // Try to load single neutral model - will log detailed errors if it doesn't exist or fails to load
+    // Register TFOpLambda layer before loading the model
+    registerTFOpLambdaLayer()
+
+    console.log('Loading beauty model from /models/model.json...')
+    
+    // Try to load single neutral model
     beautyModel = await tf
       .loadLayersModel('/models/model.json')
       .catch((error) => {
@@ -47,6 +126,10 @@ export async function loadBeautyModels(): Promise<void> {
 
     if (beautyModel) {
       console.log('✅ Browser AI beauty model loaded successfully!')
+      console.log('Model summary:', {
+        inputs: beautyModel.inputs.map(i => ({ name: i.name, shape: i.shape })),
+        outputs: beautyModel.outputs.map(o => ({ name: o.name, shape: o.shape }))
+      })
     } else {
       // Model doesn't exist yet or failed to load - AI scoring will be disabled
       console.log(
@@ -56,7 +139,7 @@ export async function loadBeautyModels(): Promise<void> {
   } catch (error) {
     // Disable AI scoring if something goes wrong and log the underlying error
     beautyModel = null
-    console.warn('Failed to load browser AI models. Face scoring via AI is disabled.', error)
+    console.error('Failed to load browser AI models. Face scoring via AI is disabled.', error)
   } finally {
     modelsLoading = false
   }
@@ -97,13 +180,14 @@ async function preprocessFaceForModel(
   // Convert canvas to tensor
   const tensor = tf.browser.fromPixels(canvas)
   
-  // Normalize to [0, 1] range
-  const normalized = tensor.toFloat().div(255.0)
+  // Convert to float32 - the model's TFOpLambda layers will handle the normalization
+  // (they will divide by 127.5 and subtract 1.0 to get [-1, 1] range)
+  const floatTensor = tensor.toFloat()
   
-  // Clean up
+  // Clean up original tensor
   tensor.dispose()
   
-  return normalized as tf.Tensor3D
+  return floatTensor as tf.Tensor3D
 }
 
 /**
@@ -202,15 +286,25 @@ export async function analyzeFace(
 export async function loadFaceApiModels(modelsPath = '/models'): Promise<void> {
   console.log('Loading face detection models...')
   
-  // Load face-api.js models
-  await Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri(modelsPath),
-    faceapi.nets.faceLandmark68Net.loadFromUri(modelsPath),
-    faceapi.nets.faceRecognitionNet.loadFromUri(modelsPath),
-  ])
+  try {
+    // Load face-api.js models
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(modelsPath),
+      faceapi.nets.faceLandmark68Net.loadFromUri(modelsPath),
+      faceapi.nets.faceRecognitionNet.loadFromUri(modelsPath),
+    ])
 
-  console.log('Face detection models loaded!')
+    console.log('Face detection models loaded!')
+  } catch (error) {
+    console.error('Failed to load face detection models:', error)
+    throw error
+  }
   
-  // Load AI beauty models
-  await loadBeautyModels()
+  // Load AI beauty models (non-blocking - allow face detection to work even if this fails)
+  try {
+    await loadBeautyModels()
+  } catch (error) {
+    console.warn('Failed to load beauty models, but face detection will still work:', error)
+    // Don't throw - allow the app to continue without beauty scoring
+  }
 }

@@ -39,18 +39,21 @@ export async function POST(req: NextRequest) {
       }
     )
 
+    // Get the period end timestamp (type assertion needed for Stripe SDK types)
+    const periodEnd = (subscription as any).current_period_end as number
+
     // Update user subscription status
     await prisma.user.update({
       where: { id: user.id },
       data: {
         subscriptionStatus: 'canceled',
-        subscriptionEndDate: new Date(subscription.current_period_end * 1000),
+        subscriptionEndDate: new Date(periodEnd * 1000),
       },
     })
 
     return NextResponse.json({
       message: 'Abonnement annulé avec succès',
-      endsAt: new Date(subscription.current_period_end * 1000),
+      endsAt: new Date(periodEnd * 1000),
     })
 
   } catch (error: any) {
