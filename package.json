@@ -13,7 +13,9 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "setup": "bash scripts/download-models.sh && npm run db:generate && npm run db:push",
-    "api:python": "cd training && python inference_api.py",
+    "api:python": "cd training/api && python inference_server.py",
+    "api:install": "cd training/api && pip install -r requirements.txt",
+    "dev:full": "echo '🚀 Start Python backend first: npm run api:python' && npm run dev",
     "unlimited-credits": "npx tsx scripts/set-unlimited.ts",
     "add-credits": "npx tsx scripts/add-credits.ts"
   },

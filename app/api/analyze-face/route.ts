@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
- * Temporary API endpoint that returns mock scores
- * This allows the MVP to work while we set up the proper backend
+ * API endpoint that forwards face analysis to Python AI backend
+ * Uses real trained model for accurate beauty scoring
  */
 export async function POST(req: NextRequest) {
   try {
@@ -16,31 +16,56 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    console.log('📥 Received face analysis request')
-    console.log('Face box:', faceBox)
+    console.log('📥 Received face analysis request, forwarding to Python AI...')
 
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Get Python backend URL from environment
+    const pythonApiUrl = process.env.PYTHON_API_URL || 'http://localhost:8000'
 
-    // Generate a realistic score (temporarily using simple algorithm)
-    // This will be replaced with actual AI model once backend is properly configured
-    const baseScore = 5.0 + Math.random() * 3.5 // 5.0 to 8.5
-    const score = Math.round(baseScore * 10) / 10
+    try {
+      // Forward request to Python FastAPI backend
+      const response = await fetch(`${pythonApiUrl}/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image,
+          faceBox,
+        }),
+      })
 
-    console.log(`✅ Generated score: ${score}`)
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+        throw new Error(error.detail || 'Python backend error')
+      }
 
-    // Calculate breakdown (simple percentage)
-    const percentage = Math.round((score / 10) * 100)
+      const result = await response.json()
+      console.log(`✅ Real AI score received: ${result.score}/10`)
 
-    return NextResponse.json({
-      score,
-      breakdown: {
-        symmetry: percentage,
-        proportions: percentage,
-        features: percentage,
-        overall: percentage,
-      },
-    })
+      return NextResponse.json(result)
+      
+    } catch (fetchError: any) {
+      console.error('❌ Python backend unavailable:', fetchError.message)
+      
+      // Fallback: Return mock score if Python backend is down
+      // This allows the app to work even if backend isn't running
+      console.log('⚠️  Using fallback scoring (Python backend not available)')
+      
+      const fallbackScore = 7.0 + Math.random() * 1.5 // 7.0-8.5
+      const score = Math.round(fallbackScore * 10) / 10
+      const percentage = Math.round((score / 10) * 100)
+
+      return NextResponse.json({
+        score,
+        breakdown: {
+          symmetry: percentage,
+          proportions: percentage,
+          features: percentage,
+          overall: percentage,
+        },
+        fallback: true, // Indicate this is not real AI
+      })
+    }
   } catch (error: any) {
     console.error('❌ Error analyzing face:', error)
     return NextResponse.json(
@@ -49,9 +74,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
-
-// TODO: Implement full AI model inference
-// The model requires tfjs-node which needs native compilation
-// For now, using simple scoring to demonstrate MVP functionality
-// Next step: Deploy to Railway/Render with Python backend for full AI inference
 
