@@ -60,6 +60,10 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 REFERRAL_CREDITS_AMOUNT=10
 INITIAL_SIGNUP_CREDITS=5
+
+# AttractiveNet API (optional - for AI beauty scoring)
+NEXT_PUBLIC_PYTHON_API_URL=http://localhost:8000
+NEXT_PUBLIC_USE_ATTRACTIVENET=true
 ```
 
 4. **Generate NextAuth secret**
@@ -99,13 +103,67 @@ wget https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weig
 cd ../..
 ```
 
-7. **Run the development server**
+7. **Install Python dependencies (for AttractiveNet API)**
+
+If you want to use the AttractiveNet model for AI-powered beauty scoring:
+
+**⚠️ IMPORTANT: TensorFlow requires Python 3.8-3.11. Python 3.12+ is NOT supported.**
+
+**If you have Python 3.12+ (like Python 3.14):**
+👉 **See [training/WINDOWS_SETUP.md](training/WINDOWS_SETUP.md) for detailed setup instructions.**
+
+**Quick start (if you have Python 3.11):**
+
+**Windows:**
+```powershell
+cd training
+py -3.11 -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements-windows.txt
+```
+
+**macOS/Linux:**
+```bash
+cd training
+python3.11 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+See `training/INSTALL_WINDOWS.md` for detailed Windows installation instructions.
+
+**For macOS/Linux:**
+```bash
+cd training
+pip install -r requirements.txt
+```
+
+**Note**: If you encounter TensorFlow installation errors, you're likely using Python 3.12+. Install Python 3.11 and use it specifically.
+
+8. **Run the development server**
+
+In one terminal, start the Next.js app:
 
 ```bash
 npm run dev
 ```
 
+In another terminal, start the Python API (if using AttractiveNet):
+
+```bash
+npm run api:python
+```
+
+Or manually:
+
+```bash
+cd training
+python inference_api.py
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+**Note**: The AttractiveNet API runs on `http://localhost:8000` by default. Make sure both services are running if you want to use AI-powered scoring. The app will gracefully fall back to geometric analysis if the API is unavailable.
 
 ## 🏗️ Project Structure
 

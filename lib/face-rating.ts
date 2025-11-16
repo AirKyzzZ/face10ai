@@ -18,6 +18,10 @@ let maleModel: tf.LayersModel | null = null
 let femaleModel: tf.LayersModel | null = null
 let modelsLoading = false
 
+// AttractiveNet API configuration
+const ATTRACTIVENET_API_URL = process.env.NEXT_PUBLIC_PYTHON_API_URL || 'http://localhost:8000'
+const USE_ATTRACTIVENET = process.env.NEXT_PUBLIC_USE_ATTRACTIVENET !== 'false' // Default to true
+
 /**
  * Load AI beauty prediction models
  */
@@ -59,7 +63,7 @@ export async function loadBeautyModels(): Promise<void> {
 }
 
 /**
- * Extract and preprocess face region for AI model input
+ * Extract and preprocess face region for AI model input (TensorFlow.js)
  */
 async function preprocessFaceForModel(
   imageElement: HTMLImageElement | HTMLCanvasElement,
@@ -100,6 +104,85 @@ async function preprocessFaceForModel(
   tensor.dispose()
   
   return normalized as tf.Tensor3D
+}
+
+/**
+ * Extract face region and convert to base64 for AttractiveNet API
+ */
+function extractFaceAsBase64(
+  imageElement: HTMLImageElement | HTMLCanvasElement,
+  detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>,
+  targetSize: { width: number; height: number } = { width: 350, height: 350 }
+): string {
+  const box = detection.detection.box
+  
+  // Create a canvas to extract the face region
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')!
+  
+  // Add padding around face (10%)
+  const padding = 0.1
+  const paddedWidth = box.width * (1 + 2 * padding)
+  const paddedHeight = box.height * (1 + 2 * padding)
+  const paddedX = Math.max(0, box.x - box.width * padding)
+  const paddedY = Math.max(0, box.y - box.height * padding)
+  
+  // Set canvas size to AttractiveNet input size (350x350)
+  canvas.width = targetSize.width
+  canvas.height = targetSize.height
+  
+  // Draw the face region
+  ctx.drawImage(
+    imageElement,
+    paddedX, paddedY, paddedWidth, paddedHeight,
+    0, 0, targetSize.width, targetSize.height
+  )
+  
+  // Convert to base64
+  return canvas.toDataURL('image/jpeg', 0.95)
+}
+
+/**
+ * Predict beauty score using AttractiveNet API
+ */
+async function predictWithAttractiveNet(
+  imageElement: HTMLImageElement | HTMLCanvasElement,
+  detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>
+): Promise<number> {
+  try {
+    // Extract face region as base64
+    const base64Image = extractFaceAsBase64(imageElement, detection)
+    
+    // Call Python API
+    const response = await fetch(`${ATTRACTIVENET_API_URL}/predict`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        image: base64Image,
+      }),
+    })
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.detail || `API request failed: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    
+    if (!data.success) {
+      throw new Error(data.message || 'Prediction failed')
+    }
+    
+    // AttractiveNet returns score in 1-5 range (from SCUT-FBP5500)
+    // Convert to 1-10 range: multiply by 2, then clamp to 1-10
+    const score = data.score * 2
+    return Math.max(1.0, Math.min(10.0, score))
+  } catch (error) {
+    console.warn('AttractiveNet API call failed:', error)
+    throw error
+  }
 }
 
 /**
@@ -329,8 +412,21 @@ export async function analyzeFace(
     let finalScore: number
     let usingAI = false
 
-    // Try to use AI model first
-    if (maleModel && femaleModel) {
+    // Priority 1: Try AttractiveNet API (if enabled)
+    if (USE_ATTRACTIVENET && typeof window !== 'undefined') {
+      try {
+        const attractivenetScore = await predictWithAttractiveNet(imageElement, detection)
+        finalScore = attractivenetScore
+        usingAI = true
+        console.log(`✅ AttractiveNet prediction: ${attractivenetScore.toFixed(2)}`)
+      } catch (attractivenetError) {
+        console.warn('AttractiveNet API failed, trying TensorFlow.js models:', attractivenetError)
+        // Fall through to next option
+      }
+    }
+
+    // Priority 2: Try TensorFlow.js models (if AttractiveNet failed or disabled)
+    if (!usingAI && maleModel && femaleModel) {
       try {
         // Preprocess face for model input
         const faceImage = await preprocessFaceForModel(imageElement, detection)
@@ -343,14 +439,14 @@ export async function analyzeFace(
         
         finalScore = aiScore
         usingAI = true
-        console.log(`AI prediction: ${aiScore.toFixed(2)} for ${gender}`)
+        console.log(`✅ TensorFlow.js AI prediction: ${aiScore.toFixed(2)} for ${gender}`)
       } catch (aiError) {
-        console.warn('AI prediction failed, falling back to geometric analysis:', aiError)
+        console.warn('TensorFlow.js AI prediction failed, falling back to geometric analysis:', aiError)
         finalScore = calculateGeometricScore(detection, gender, imageHash)
       }
-    } else {
-      // Fall back to geometric analysis if models not loaded
-      // This is expected if models haven't been trained yet
+    } else if (!usingAI) {
+      // Priority 3: Fall back to geometric analysis
+      // This is expected if models haven't been trained yet or APIs are unavailable
       finalScore = calculateGeometricScore(detection, gender, imageHash)
     }
 

@@ -1,9 +1,10 @@
-# Core Deep Learning (Apple Silicon / macOS)
+# Core Deep Learning
 # Use tensorflow-macos for Apple Silicon Macs (M1/M2/M3)
-# Use tensorflow for Intel Macs or Linux
+# Use tensorflow for Windows, Linux, and Intel Macs
 tensorflow-macos>=2.13.0; platform_machine == 'arm64' and sys_platform == 'darwin'
 tensorflow-metal>=1.0.0; platform_machine == 'arm64' and sys_platform == 'darwin'
-tensorflow>=2.13.0; platform_machine != 'arm64' or sys_platform != 'darwin'
+# For Windows and other platforms, use tensorflow (more flexible version requirement)
+tensorflow>=2.10.0; platform_machine != 'arm64' or sys_platform != 'darwin'
 
 # TensorFlow.js Conversion
 tensorflowjs>=4.11.0
@@ -29,4 +30,9 @@ ipywidgets>=8.1.0
 
 # Utilities
 tqdm>=4.66.0
+
+# API Server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
 
