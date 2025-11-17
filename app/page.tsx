@@ -88,18 +88,32 @@ export default function HomePage() {
       const formData = new FormData()
       formData.append('image', selectedFile)
 
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      let uploadResponse
+      try {
+        uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+      } catch (networkError: any) {
+        // Handle network errors (connection refused, timeout, etc.)
+        console.error('Network error:', networkError)
+        throw new Error('Erreur de connexion. Vérifiez votre connexion internet.')
+      }
 
       if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json()
-        if (errorData.requiresAuth) {
-          router.push('/auth/signup')
-          return
+        let errorMessage = 'Erreur lors du téléchargement'
+        try {
+          const errorData = await uploadResponse.json()
+          if (errorData.requiresAuth) {
+            router.push('/auth/signup')
+            return
+          }
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          // If response is not JSON, use status text
+          errorMessage = uploadResponse.statusText || errorMessage
         }
-        throw new Error(errorData.error || 'Erreur lors du téléchargement')
+        throw new Error(errorMessage)
       }
 
       const { imageHash, imageData, cached, ratingId } = await uploadResponse.json()
@@ -133,7 +147,14 @@ export default function HomePage() {
       })
 
       if (!analyzeResponse.ok) {
-        throw new Error('Erreur lors de l\'analyse')
+        let errorMessage = 'Erreur lors de l\'analyse'
+        try {
+          const errorData = await analyzeResponse.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          errorMessage = analyzeResponse.statusText || errorMessage
+        }
+        throw new Error(errorMessage)
       }
 
       const { ratingId: newRatingId } = await analyzeResponse.json()

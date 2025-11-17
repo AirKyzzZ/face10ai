@@ -42,14 +42,37 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert file to buffer and generate hash
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const imageHash = generateImageHash(buffer)
+    let imageHash: string
+    let buffer: Buffer
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      buffer = Buffer.from(arrayBuffer)
+      imageHash = generateImageHash(buffer)
+    } catch (hashError: any) {
+      console.error('Hash generation error:', hashError)
+      return NextResponse.json(
+        { error: 'Erreur lors du traitement de l\'image' },
+        { status: 500 }
+      )
+    }
 
     // Check if this image has been analyzed before
-    const existingRating = await prisma.rating.findUnique({
-      where: { imageHash },
-    })
+    let existingRating
+    try {
+      existingRating = await prisma.rating.findUnique({
+        where: { imageHash },
+      })
+    } catch (dbError: any) {
+      console.error('Database query error:', dbError)
+      // If it's a connection error, provide a more helpful message
+      if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+        return NextResponse.json(
+          { error: 'Erreur de connexion à la base de données' },
+          { status: 503 }
+        )
+      }
+      throw dbError // Re-throw to be caught by outer catch
+    }
 
     if (existingRating) {
       return NextResponse.json({
@@ -67,10 +90,22 @@ export async function POST(request: NextRequest) {
     if (session?.user?.id) {
       // Authenticated user - check credits
       userId = session.user.id
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { creditsRemaining: true },
-      })
+      let user
+      try {
+        user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { creditsRemaining: true },
+        })
+      } catch (dbError: any) {
+        console.error('Database query error (user):', dbError)
+        if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+          return NextResponse.json(
+            { error: 'Erreur de connexion à la base de données' },
+            { status: 503 }
+          )
+        }
+        throw dbError
+      }
 
       if (!user || user.creditsRemaining <= 0) {
         return NextResponse.json(
@@ -82,8 +117,21 @@ export async function POST(request: NextRequest) {
       canProceed = true
     } else {
       // Anonymous user - check limit
-      const sessionId = await getOrCreateAnonymousSession()
-      const canUse = await canUseAnonymousRating(sessionId)
+      let sessionId
+      let canUse
+      try {
+        sessionId = await getOrCreateAnonymousSession()
+        canUse = await canUseAnonymousRating(sessionId)
+      } catch (dbError: any) {
+        console.error('Database query error (anonymous):', dbError)
+        if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+          return NextResponse.json(
+            { error: 'Erreur de connexion à la base de données' },
+            { status: 503 }
+          )
+        }
+        throw dbError
+      }
 
       if (!canUse) {
         return NextResponse.json(
@@ -116,10 +164,11 @@ export async function POST(request: NextRequest) {
       imageData: dataUrl,
       userId,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error)
+    const errorMessage = error?.message || 'Erreur lors du téléchargement'
     return NextResponse.json(
-      { error: 'Erreur lors du téléchargement' },
+      { error: errorMessage },
       { status: 500 }
     )
   }
