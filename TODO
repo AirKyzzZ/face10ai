@@ -4,6 +4,7 @@ Face recognition :
 ✔ Make the countdown timer loop 48h everytime it gets to 0 it resets to 48h
 ✔ Make subscription annnualy optional make it default when viewing the pricing page or section and theres a discount if the users pays 12 months at once show it and implement stripe @done(25-11-25 20:43)
 ☐ i18n anglais
+☐ Smooth scrolling lenis
 ☐ Fix the marquee not looping correctly and add logos realted to ai beauty and dating companies like Tinder etc
 ☐ Make a big complete prompt for chatgpt like he dosn't know a word about the project and make him generate the logo of the app in a square format for it to be in the browser bar 
 ☐ And a second logo in a rectangular format for it to be in the navbar
