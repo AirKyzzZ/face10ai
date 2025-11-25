@@ -15,6 +15,7 @@ interface PricingCardProps {
   features: string[];
   isPopular?: boolean;
   index: number;
+  billingPeriod: 'monthly' | 'annual';
 }
 
 export function PricingCard({
@@ -26,6 +27,7 @@ export function PricingCard({
   features,
   isPopular,
   index,
+  billingPeriod,
 }: PricingCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -56,7 +58,7 @@ export function PricingCard({
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier }),
+        body: JSON.stringify({ tier, billingPeriod }),
       });
 
       const data = await response.json();
@@ -151,6 +153,11 @@ export function PricingCard({
           </span>
           {!isFree && <span className="text-gray-400 text-lg">/mois</span>}
         </div>
+        {billingPeriod === 'annual' && !isFree && (
+          <p className="text-green-400 text-sm mt-1 font-medium">
+            Facturé annuellement • Économisez jusqu'à 30%
+          </p>
+        )}
         <p className="text-gray-400 text-sm mt-2">
           {credits} crédits {tier === 'FREE' ? 'à vie' : 'par mois'}
         </p>

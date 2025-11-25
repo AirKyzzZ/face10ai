@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.userId
   const tier = session.metadata?.tier as 'PRO' | 'PREMIUM'
+  const billingPeriod = (session.metadata?.billingPeriod as 'monthly' | 'annual') || 'monthly'
   
   if (!userId || !tier) {
     console.error('Missing metadata in checkout session')
@@ -83,9 +84,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const customerId = session.customer as string
   const subscriptionId = session.subscription as string
 
-  // Calculate credits reset date (1 month from now)
+  // Calculate credits reset date based on billing period
   const creditsResetAt = new Date()
-  creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
+  if (billingPeriod === 'annual') {
+    creditsResetAt.setFullYear(creditsResetAt.getFullYear() + 1)
+  } else {
+    creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
+  }
 
   // Update user with subscription info and grant credits
   await prisma.$transaction([
@@ -135,10 +140,16 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const isRenewal = invoice.billing_reason === 'subscription_cycle'
   
   if (isRenewal) {
-    // Reset monthly credits
+    // Reset credits based on subscription interval
     const tier = user.subscriptionTier as 'PRO' | 'PREMIUM'
     const creditsResetAt = new Date()
-    creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
+    // Check subscription interval from Stripe
+    const interval = subscription.items.data[0]?.price?.recurring?.interval
+    if (interval === 'year') {
+      creditsResetAt.setFullYear(creditsResetAt.getFullYear() + 1)
+    } else {
+      creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
+    }
 
     await prisma.$transaction([
       prisma.user.update({

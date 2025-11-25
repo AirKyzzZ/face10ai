@@ -13,8 +13,14 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 // Price IDs mapping
 export const STRIPE_PRICE_IDS = {
-  PRO: process.env.STRIPE_PRO_PRICE_ID || '',
-  PREMIUM: process.env.STRIPE_PREMIUM_PRICE_ID || '',
+  PRO: {
+    monthly: process.env.STRIPE_PRO_PRICE_ID || '',
+    annual: process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
+  },
+  PREMIUM: {
+    monthly: process.env.STRIPE_PREMIUM_PRICE_ID || '',
+    annual: process.env.STRIPE_PREMIUM_ANNUAL_PRICE_ID || '',
+  },
 }
 
 // Re-export for convenience in server code
@@ -25,6 +31,7 @@ export interface CreateCheckoutSessionParams {
   userId: string
   userEmail: string
   tier: 'PRO' | 'PREMIUM'
+  billingPeriod: 'monthly' | 'annual'
   successUrl: string
   cancelUrl: string
 }
@@ -33,13 +40,14 @@ export async function createCheckoutSession({
   userId,
   userEmail,
   tier,
+  billingPeriod,
   successUrl,
   cancelUrl,
 }: CreateCheckoutSessionParams) {
-  const priceId = STRIPE_PRICE_IDS[tier]
+  const priceId = STRIPE_PRICE_IDS[tier][billingPeriod]
   
   if (!priceId) {
-    throw new Error(`Invalid tier: ${tier}`)
+    throw new Error(`Invalid tier or billing period: ${tier} - ${billingPeriod}`)
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -56,6 +64,7 @@ export async function createCheckoutSession({
     metadata: {
       userId,
       tier,
+      billingPeriod,
     },
     success_url: successUrl,
     cancel_url: cancelUrl,

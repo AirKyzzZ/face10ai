@@ -14,11 +14,18 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { tier } = await req.json()
+    const { tier, billingPeriod = 'annual' } = await req.json()
     
     if (!tier || !['PRO', 'PREMIUM'].includes(tier)) {
       return NextResponse.json(
         { error: 'Niveau d\'abonnement invalide' },
+        { status: 400 }
+      )
+    }
+
+    if (!billingPeriod || !['monthly', 'annual'].includes(billingPeriod)) {
+      return NextResponse.json(
+        { error: 'Période de facturation invalide' },
         { status: 400 }
       )
     }
@@ -31,6 +38,7 @@ export async function POST(req: NextRequest) {
       userId: session.user.id,
       userEmail: session.user.email,
       tier,
+      billingPeriod,
       successUrl,
       cancelUrl,
     })

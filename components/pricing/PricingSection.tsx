@@ -5,12 +5,16 @@ import { CountdownTimer } from './CountdownTimer';
 import { PricingCard } from './PricingCard';
 import { HoverBorderGradient } from '@/components/template/FramerButton';
 import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 const pricingTiers = [
   {
     tier: 'FREE' as const,
     title: 'Gratuit',
-    price: '0€',
+    price: {
+      monthly: '0€',
+      annual: '0€',
+    },
     credits: 5,
     features: [
       '5 analyses gratuites à vie',
@@ -23,8 +27,14 @@ const pricingTiers = [
   {
     tier: 'PRO' as const,
     title: 'Pro',
-    price: '6,99€',
-    originalPrice: '9,99€',
+    price: {
+      monthly: '6,99€',
+      annual: '69,99€',
+    },
+    originalPrice: {
+      monthly: '9,99€',
+      annual: '119,88€',
+    },
     credits: 25,
     features: [
       '25 analyses par mois',
@@ -40,8 +50,14 @@ const pricingTiers = [
   {
     tier: 'PREMIUM' as const,
     title: 'Premium',
-    price: '13,99€',
-    originalPrice: '19,99€',
+    price: {
+      monthly: '13,99€',
+      annual: '139,99€',
+    },
+    originalPrice: {
+      monthly: '19,99€',
+      annual: '239,88€', // 19.99 * 12
+    },
     credits: 50,
     features: [
       '50 analyses par mois',
@@ -57,6 +73,33 @@ const pricingTiers = [
 ];
 
 export function PricingSection() {
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('annual');
+
+  // Helper function to get monthly equivalent of annual price
+  const getMonthlyEquivalent = (annualPrice: string): string => {
+    const numericPrice = parseFloat(annualPrice.replace(',', '.').replace('€', '').trim());
+    const monthlyEquivalent = numericPrice / 12;
+    return `${monthlyEquivalent.toFixed(2).replace('.', ',')}€`;
+  };
+
+  // Helper function to get display price based on billing period
+  const getDisplayPrice = (tier: typeof pricingTiers[0]): string => {
+    if (tier.tier === 'FREE') return tier.price[billingPeriod];
+    if (billingPeriod === 'annual') {
+      return getMonthlyEquivalent(tier.price.annual);
+    }
+    return tier.price.monthly;
+  };
+
+  // Helper function to get display original price based on billing period
+  const getDisplayOriginalPrice = (tier: typeof pricingTiers[0]): string | undefined => {
+    if (!tier.originalPrice) return undefined;
+    if (billingPeriod === 'annual') {
+      return getMonthlyEquivalent(tier.originalPrice.annual);
+    }
+    return tier.originalPrice.monthly;
+  };
+
   return (
     <div id="pricing" className="flex flex-col bg-gradient-to-b from-[#0C0F15] to-[#040508] justify-center items-center w-full relative py-32 bp3:py-20">
       {/* Background Effects */}
@@ -128,10 +171,52 @@ export function PricingSection() {
         </p>
       </div>
 
+      {/* Billing Period Toggle */}
+      <div className="flex flex-col items-center justify-center gap-3 mb-8 z-10">
+        {billingPeriod === 'annual' && (
+          <span className="px-3 py-1 bg-gradient-to-r from-green-600 to-green-500 text-white text-sm font-semibold rounded-full">
+            Économisez jusqu'à 30%
+          </span>
+        )}
+        <div className="flex items-center justify-center gap-4">
+          <span className={`text-sm font-medium transition-colors ${billingPeriod === 'monthly' ? 'text-white' : 'text-gray-500'}`}>
+            Mensuel
+          </span>
+          <button
+            type="button"
+            onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'annual' : 'monthly')}
+            className="relative inline-flex h-8 w-14 items-center rounded-full bg-gradient-to-r from-[#5B698B] to-[#8096D2] transition-colors focus:outline-none focus:ring-2 focus:ring-[#8096D2] focus:ring-offset-2 focus:ring-offset-[#0C0F15]"
+            role="switch"
+            aria-checked={billingPeriod === 'annual'}
+            aria-label="Toggle billing period"
+          >
+            <span
+              className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                billingPeriod === 'annual' ? 'translate-x-7' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <span className={`text-sm font-medium transition-colors ${billingPeriod === 'annual' ? 'text-white' : 'text-gray-500'}`}>
+            Annuel
+          </span>
+        </div>
+      </div>
+
       {/* Pricing Cards */}
       <div className="grid grid-cols-3 bp1:grid-cols-1 gap-8 bp3:gap-6 w-[90%] max-w-6xl mt-12 z-10">
         {pricingTiers.map((tier, index) => (
-          <PricingCard key={tier.tier} {...tier} index={index} />
+          <PricingCard 
+            key={tier.tier} 
+            tier={tier.tier}
+            title={tier.title}
+            price={getDisplayPrice(tier)}
+            originalPrice={getDisplayOriginalPrice(tier)}
+            credits={tier.credits}
+            features={tier.features}
+            isPopular={tier.isPopular}
+            index={index}
+            billingPeriod={billingPeriod}
+          />
         ))}
       </div>
 
