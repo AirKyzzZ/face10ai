@@ -1,4 +1,4 @@
-import { BorderBeam } from "../magicui/border-beam";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 interface GridProps {
   text: string;

@@ -4,7 +4,7 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Cog, UserCircle } from "lucide-react";
-import { BorderBeam } from "../magicui/border-beam";
+import { BorderBeam } from "@/components/magicui/border-beam";
 import RadarTargetingCard from "./radar-targeting-card";
 import BarGraph3D from "./bar-graph";
 import PieChart3D from "./pie-charts";

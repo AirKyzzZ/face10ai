@@ -1,8 +1,8 @@
 import React from "react";
 import { UserCircle, Zap } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card } from "../ui/card";
-import { BorderBeam } from "../magicui/border-beam";
+import { Card } from "@/components/ui/card";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 const RadarTargetingCard = () => {
   // Starting positions on the outer circle (radius = 140px)

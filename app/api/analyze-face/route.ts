@@ -27,6 +27,9 @@ export async function POST(req: NextRequest) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(process.env.INTERNAL_API_KEY && {
+            'X-API-Key': process.env.INTERNAL_API_KEY,
+          }),
         },
         body: JSON.stringify({
           image,

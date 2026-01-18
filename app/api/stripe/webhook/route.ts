@@ -118,10 +118,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  const subscriptionId = typeof invoice.subscription === 'string' 
-    ? invoice.subscription 
-    : invoice.subscription?.id
-  
+  // Get subscription ID from invoice (handle both string and object cases)
+  const invoiceWithSub = invoice as Stripe.Invoice & { subscription?: string | { id: string } | null }
+  const subscriptionId = typeof invoiceWithSub.subscription === 'string'
+    ? invoiceWithSub.subscription
+    : invoiceWithSub.subscription?.id
+
   if (!subscriptionId) return
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
