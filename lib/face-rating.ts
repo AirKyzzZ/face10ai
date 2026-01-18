@@ -207,14 +207,24 @@ async function predictBeautyWithAI(
     // Run inference
     const prediction = beautyModel.predict(input) as tf.Tensor
     const scoreArray = await prediction.data()
-    const score = scoreArray[0]
-    
+    const rawScore = scoreArray[0]
+
     // Clean up tensors
     prediction.dispose()
     input.dispose()
-    
-    // Ensure score is in valid range (0-10)
-    return Math.max(0, Math.min(10, score))
+
+    // Scale from training range (1.02-4.75) to 1-10 range
+    // Training data stats: min=1.02, max=4.75, mean=2.99
+    const trainMin = 1.02
+    const trainMax = 4.75
+    const trainRange = trainMax - trainMin
+
+    // Scale to [0, 1] first, then to [1, 10]
+    const normalized = (rawScore - trainMin) / trainRange
+    const score = 1.0 + (normalized * 9.0)
+
+    // Clamp to ensure it stays in 1-10 range
+    return Math.max(1.0, Math.min(10.0, score))
   } catch (error) {
     input.dispose()
     throw error

@@ -9,7 +9,7 @@ import * as faceapi from 'face-api.js'
 
 import Header from "@/components/Header";
 import { ImageUploader } from '@/components/ImageUploader'
-import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating-api'
+import { analyzeFace, loadFaceApiModels } from '@/lib/face-rating'
 import { HoverBorderGradient } from "@/components/template/FramerButton";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import LogoMarquee from "@/components/template/marquee";
