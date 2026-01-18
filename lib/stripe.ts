@@ -2,14 +2,31 @@ import 'server-only'
 import Stripe from 'stripe'
 import { TIER_CREDITS } from './subscription-config'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY environment variable')
+// Lazy initialization to avoid build-time errors
+let stripeInstance: Stripe | null = null
+
+export function getStripe(): Stripe {
+  if (!stripeInstance) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('Missing STRIPE_SECRET_KEY environment variable')
+    }
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-10-29.clover',
+      typescript: true,
+    })
+  }
+  return stripeInstance
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-10-29.clover',
-  typescript: true,
-})
+// For backwards compatibility - use getStripe() for new code
+export const stripe = {
+  get checkout() { return getStripe().checkout },
+  get customers() { return getStripe().customers },
+  get subscriptions() { return getStripe().subscriptions },
+  get billingPortal() { return getStripe().billingPortal },
+  get webhooks() { return getStripe().webhooks },
+  get invoices() { return getStripe().invoices },
+}
 
 // Price IDs mapping
 export const STRIPE_PRICE_IDS = {
