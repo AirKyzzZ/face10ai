@@ -43,7 +43,7 @@ export function ImageUploader({ onImageSelect, disabled }: ImageUploaderProps) {
   return (
     <div className="w-full max-w-md mx-auto">
       <motion.div
-        {...getRootProps()}
+        {...(({ onDrag, onDragStart, onDragEnd, ...rest }) => rest)(getRootProps())}
         whileHover={{ scale: disabled ? 1 : 1.02 }}
         className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-colors ${
           isDragActive
