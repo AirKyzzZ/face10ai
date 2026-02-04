@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description: "Analysez votre visage avec notre algorithme IA avancé et découvrez votre note d'attractivité sur 10. Analyse basée sur la symétrie faciale, les proportions et le nombre d'or.",
   keywords: ["attractivité", "beauté", "analyse visage", "IA", "test attractivité", "note beauté"],
   authors: [{ name: "Combien sur 10" }],
+  verification: {
+    google: "4QRu67RELS06oDzjPHno4lJpdTAgdOMnanaIDBy39Ao",
+  },
   openGraph: {
     title: "Combien sur 10 - Découvrez votre note d'attractivité",
     description: "Analysez votre visage avec notre algorithme IA avancé",
