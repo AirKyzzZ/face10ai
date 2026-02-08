@@ -10,11 +10,13 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { useSession, signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { AlignJustify, Coins } from "lucide-react";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const Header = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -22,6 +24,7 @@ const Header = () => {
   const [isHovered2, setIsHovered2] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
+  const t = useTranslations('nav');
 
   const handleMouseMove = (event: React.MouseEvent<HTMLButtonElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -53,10 +56,10 @@ const Header = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent hover:bg-transparent data-[state=open]:text-white hover:text-white transition-colors duration-200">
-                  Produits
+                  {t('products')}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <motion.ul 
+                  <motion.ul
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
@@ -64,29 +67,29 @@ const Header = () => {
                   >
                     <li className="col-span-1">
                       <span className="text-lg font-medium text-[#5B698B]">
-                        Produits
+                        {t('products')}
                       </span>
                       <ul className="mt-4 space-y-2">
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/dashboard"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Tableau de bord
+                              {t('dashboard')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Analyse IA
+                              {t('aiAnalysis')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                       </ul>
@@ -95,13 +98,13 @@ const Header = () => {
                       <ul className="mt-12 space-y-4">
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/about"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              À propos
+                              {t('about')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                       </ul>
@@ -112,10 +115,10 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent data-[state=open]:bg-transparent hover:bg-transparent data-[state=open]:text-white hover:text-white transition-colors duration-200">
-                  Outils
+                  {t('tools')}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <motion.ul 
+                  <motion.ul
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
@@ -123,29 +126,29 @@ const Header = () => {
                   >
                     <li className="col-span-1">
                       <span className="text-lg font-medium text-[#5B698B]">
-                        Outils
+                        {t('tools')}
                       </span>
                       <ul className="mt-4 space-y-2">
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Analyseur IA
+                              {t('aiAnalyzer')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Modèle Entraîné
+                              {t('trainedModel')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                       </ul>
@@ -154,13 +157,13 @@ const Header = () => {
                       <ul className="mt-12 space-y-4">
                         <li>
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               href="/"
                               className="text-white hover:text-[#8096D2] block pb-1 transition-colors duration-200"
                             >
-                              Base de Données IA
+                              {t('aiDatabase')}
                               <div className="w-[150px] h-[1px] mt-4 bg-gradient-to-r from-[#2E3A58] to-[#455783]" />
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                       </ul>
@@ -172,7 +175,7 @@ const Header = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link href="/pricing" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200 px-4")}>
-                    Tarifs
+                    {t('pricing')}
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -180,7 +183,7 @@ const Header = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link href="/about" className={cn("text-sm hover:text-[#8096D2] transition-colors duration-200 px-4")}>
-                    Nous contacter
+                    {t('contact')}
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -196,10 +199,13 @@ const Header = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex bp3:hidden items-center gap-4"
         >
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {session ? (
             <>
               {/* Credit Badge */}
-              <motion.div 
+              <motion.div
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#2E3139] to-[#1E2536] border-[1px] border-[#5B698B] rounded-full"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
@@ -218,7 +224,7 @@ const Header = () => {
                 onHoverEnd={() => setIsHovered1(false)}
                 onClick={() => router.push('/dashboard')}
               >
-                <span className="relative z-10">Dashboard</span>
+                <span className="relative z-10">{t('dashboard')}</span>
                 {isHovered1 && (
                   <motion.div
                     className="absolute inset-0 z-0"
@@ -237,7 +243,7 @@ const Header = () => {
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="px-4 py-2 text-white text-sm font-light hover:text-red-400 transition-colors duration-200"
               >
-                Déconnexion
+                {t('logout')}
               </button>
             </>
           ) : (
@@ -250,7 +256,7 @@ const Header = () => {
                 onHoverEnd={() => setIsHovered1(false)}
                 onClick={() => router.push('/auth/signin')}
               >
-                <span className="relative z-10">Connexion</span>
+                <span className="relative z-10">{t('login')}</span>
                 {isHovered1 && (
                   <motion.div
                     className="absolute inset-0 z-0"
@@ -272,7 +278,7 @@ const Header = () => {
                 onHoverEnd={() => setIsHovered2(false)}
                 onClick={() => router.push('/auth/signup')}
               >
-                <span className="relative z-10">Commencer</span>
+                <span className="relative z-10">{t('getStarted')}</span>
                 {isHovered2 && (
                   <motion.div
                     className="absolute inset-0 z-0"
@@ -294,4 +300,3 @@ const Header = () => {
 };
 
 export default Header;
-
