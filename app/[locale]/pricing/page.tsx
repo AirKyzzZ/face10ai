@@ -112,7 +112,7 @@ export default function PricingPage() {
                 transition={{ delay: index * 0.1 }}
                 className="p-6 rounded-xl bg-gradient-to-b from-[#1a1d2e] to-[#0d0f15] border border-[#333B4F]"
               >
-                <p className="text-gray-300 mb-4 font-light italic">"{testimonial.text}"</p>
+                <p className="text-gray-300 mb-4 font-light italic">&quot;{testimonial.text}&quot;</p>
                 <div className="flex items-center justify-between">
                   <span className="text-white font-light">{testimonial.name}</span>
                   <span className="text-sm text-[#8096D2] bg-[#8096D2]/10 px-3 py-1 rounded-full">

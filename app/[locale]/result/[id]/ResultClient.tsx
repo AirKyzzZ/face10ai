@@ -79,7 +79,7 @@ export default function ResultClient({ rating }: ResultClientProps) {
           
           <div className="relative z-10 text-center">
             <h1 className="text-2xl font-light text-gray-300 mb-4">
-              Votre Note d'Attractivité
+              Votre Note d&apos;Attractivité
             </h1>
             
             <motion.div

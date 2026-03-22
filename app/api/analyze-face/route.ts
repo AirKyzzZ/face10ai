@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json(result)
       
-    } catch (fetchError: any) {
-      console.error('❌ Python backend unavailable:', fetchError.message)
+    } catch (fetchError) {
+      console.error('❌ Python backend unavailable:', fetchError instanceof Error ? fetchError.message : fetchError)
       
       // Fallback: Return mock score if Python backend is down
       // This allows the app to work even if backend isn't running
@@ -69,10 +69,10 @@ export async function POST(req: NextRequest) {
         fallback: true, // Indicate this is not real AI
       })
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error analyzing face:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to analyze face' },
+      { error: error instanceof Error ? error.message : 'Failed to analyze face' },
       { status: 500 }
     )
   }

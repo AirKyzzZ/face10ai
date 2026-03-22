@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     if (!referralCode) {
       return NextResponse.json(
-        { error: 'Code de parrainage requis' },
+        { error: 'Referral code is required' },
         { status: 400 }
       )
     }
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     if (!referrer) {
       return NextResponse.json(
-        { error: 'Code de parrainage invalide' },
+        { error: 'Invalid referral code' },
         { status: 404 }
       )
     }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Track referral error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la validation du code' },
+      { error: 'Failed to validate referral code' },
       { status: 500 }
     )
   }

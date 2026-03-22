@@ -4,13 +4,13 @@ import { authOptions } from '@/lib/auth-config'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Non autorisé' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Utilisateur non trouvé' },
+        { error: 'User not found' },
         { status: 404 }
       )
     }
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     if (!customerId) {
       return NextResponse.json({
-        message: 'Aucun compte Stripe trouvé',
+        message: 'No Stripe account found',
         tier: 'FREE',
         credits: user.creditsRemaining,
       })
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     if (subscriptions.data.length === 0) {
       return NextResponse.json({
-        message: 'Aucun abonnement actif',
+        message: 'No active subscription',
         tier: 'FREE',
       })
     }
@@ -90,11 +90,9 @@ export async function POST(req: NextRequest) {
 
     // Only set creditsResetAt if it doesn't exist (first time setup)
     const shouldSetResetDate = !user.creditsResetAt
-    const creditsResetAt = shouldSetResetDate ? (() => {
-      const date = new Date()
-      date.setMonth(date.getMonth() + 1)
-      return date
-    })() : undefined
+    const creditsResetAt = shouldSetResetDate
+      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      : undefined
 
     // Update user subscription metadata ONLY (preserve credits)
     await prisma.user.update({
@@ -110,16 +108,16 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({
-      message: 'Abonnement synchronisé avec succès!',
+      message: 'Subscription synced successfully',
       tier,
       credits: user.creditsRemaining,
       status: subscription.status,
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Sync error:', error)
     return NextResponse.json(
-      { error: error.message || 'Erreur lors de la synchronisation' },
+      { error: error instanceof Error ? error.message : 'Failed to sync subscription' },
       { status: 500 }
     )
   }

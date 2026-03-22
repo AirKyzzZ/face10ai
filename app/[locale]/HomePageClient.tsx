@@ -109,7 +109,7 @@ export default function HomePageClient() {
             return
           }
           errorMessage = errorData.error || errorMessage
-        } catch (parseError) {
+        } catch (_parseError) {
           errorMessage = uploadResponse.statusText || errorMessage
         }
         throw new Error(errorMessage)
@@ -150,7 +150,7 @@ export default function HomePageClient() {
         try {
           const errorData = await analyzeResponse.json()
           errorMessage = errorData.error || errorMessage
-        } catch (parseError) {
+        } catch (_parseError) {
           errorMessage = analyzeResponse.statusText || errorMessage
         }
         throw new Error(errorMessage)

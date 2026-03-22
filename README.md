@@ -19,7 +19,7 @@ A modern SaaS application that analyzes facial attractiveness using AI, built wi
 Before you begin, ensure you have:
 
 - Node.js 18+ installed
-- PostgreSQL database (or Supabase account)
+- PostgreSQL database
 - Google OAuth credentials (optional, for Google login)
 
 ## 🛠️ Installation
@@ -44,11 +44,6 @@ Create a `.env.local` file in the root directory:
 ```env
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/face10ai?schema=public"
-
-# Supabase (if using Supabase)
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000

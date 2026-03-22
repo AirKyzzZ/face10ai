@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { trackReferral } from '@/lib/referrals'
-import { addCredits } from '@/lib/credits'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email et mot de passe requis' },
+        { error: 'Email and password are required' },
         { status: 400 }
       )
     }
@@ -23,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Un compte avec cet email existe déjà' },
+        { error: 'An account with this email already exists' },
         { status: 400 }
       )
     }
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         amount: initialCredits,
         type: 'signup',
-        description: 'Crédits initiaux pour nouveau compte',
+        description: 'Initial credits for new account',
       },
     })
 
@@ -71,7 +70,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Signup error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de l\'inscription' },
+      { error: 'Registration failed' },
       { status: 500 }
     )
   }

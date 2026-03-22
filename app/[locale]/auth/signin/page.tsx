@@ -39,7 +39,7 @@ export default function SignInPage() {
         router.push(callbackUrl as '/dashboard')
         router.refresh()
       }
-    } catch (err) {
+    } catch (_err) {
       setError(t('errorOccurred'))
     } finally {
       setIsLoading(false)

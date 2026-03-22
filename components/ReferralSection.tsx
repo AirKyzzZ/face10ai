@@ -13,7 +13,7 @@ interface ReferralSectionProps {
 }
 
 export function ReferralSection({
-  referralCode,
+  referralCode: _referralCode,
   referralUrl,
   stats,
 }: ReferralSectionProps) {

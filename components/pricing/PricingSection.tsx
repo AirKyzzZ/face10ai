@@ -152,7 +152,7 @@ export function PricingSection() {
         </motion.div>
 
         <p className="text-5xl bp3:text-2xl bp4:text-3xl text-center font-light mb-2">
-          L'offre se termine dans
+          L&apos;offre se termine dans
         </p>
 
         <div className="relative flex items-center w-full justify-center mt-1 mb-4 pointer-events-none">
@@ -167,7 +167,7 @@ export function PricingSection() {
 
         <p className="text-center text-gray-400 max-w-2xl mt-4">
           Ne manquez pas cette opportunité unique ! Profitez de notre remise exceptionnelle de 30% 
-          et débloquez tout le potentiel de notre IA d'analyse.
+          et débloquez tout le potentiel de notre IA d&apos;analyse.
         </p>
       </div>
 
@@ -175,7 +175,7 @@ export function PricingSection() {
       <div className="flex flex-col items-center justify-center gap-3 mb-8 z-10">
         {billingPeriod === 'annual' && (
           <span className="px-3 py-1 bg-gradient-to-r from-green-600 to-green-500 text-white text-sm font-semibold rounded-full">
-            Économisez jusqu'à 30%
+            Économisez jusqu&apos;à 30%
           </span>
         )}
         <div className="flex items-center justify-center gap-4">

@@ -6,9 +6,7 @@ import { generateImageHash } from '@/lib/image-hash'
 import {
   getOrCreateAnonymousSession,
   canUseAnonymousRating,
-  incrementAnonymousRating,
 } from '@/lib/anonymous-tracking'
-import { deductCredit } from '@/lib/credits'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
@@ -20,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'Aucune image fournie' },
+        { error: 'No image provided' },
         { status: 400 }
       )
     }
@@ -28,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Type de fichier non autorisé. Utilisez JPEG, PNG ou WebP.' },
+        { error: 'Unsupported file type. Use JPEG, PNG, or WebP.' },
         { status: 400 }
       )
     }
@@ -36,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'Le fichier est trop volumineux. Maximum 10MB.' },
+        { error: 'File too large. Maximum 10MB.' },
         { status: 400 }
       )
     }
@@ -48,10 +46,10 @@ export async function POST(request: NextRequest) {
       const arrayBuffer = await file.arrayBuffer()
       buffer = Buffer.from(arrayBuffer)
       imageHash = generateImageHash(buffer)
-    } catch (hashError: any) {
+    } catch (hashError) {
       console.error('Hash generation error:', hashError)
       return NextResponse.json(
-        { error: 'Erreur lors du traitement de l\'image' },
+        { error: 'Failed to process image' },
         { status: 500 }
       )
     }
@@ -62,12 +60,14 @@ export async function POST(request: NextRequest) {
       existingRating = await prisma.rating.findUnique({
         where: { imageHash },
       })
-    } catch (dbError: any) {
+    } catch (dbError) {
       console.error('Database query error:', dbError)
       // If it's a connection error, provide a more helpful message
-      if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+      const code = (dbError as { code?: string }).code
+      const msg = dbError instanceof Error ? dbError.message : ''
+      if (code === 'P1001' || msg.includes('connect')) {
         return NextResponse.json(
-          { error: 'Erreur de connexion à la base de données' },
+          { error: 'Database connection error' },
           { status: 503 }
         )
       }
@@ -96,11 +96,13 @@ export async function POST(request: NextRequest) {
           where: { id: userId },
           select: { creditsRemaining: true },
         })
-      } catch (dbError: any) {
+      } catch (dbError) {
         console.error('Database query error (user):', dbError)
-        if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+        const code = (dbError as { code?: string }).code
+        const msg = dbError instanceof Error ? dbError.message : ''
+        if (code === 'P1001' || msg.includes('connect')) {
           return NextResponse.json(
-            { error: 'Erreur de connexion à la base de données' },
+            { error: 'Database connection error' },
             { status: 503 }
           )
         }
@@ -109,7 +111,7 @@ export async function POST(request: NextRequest) {
 
       if (!user || user.creditsRemaining <= 0) {
         return NextResponse.json(
-          { error: 'Crédits insuffisants' },
+          { error: 'Insufficient credits' },
           { status: 403 }
         )
       }
@@ -122,11 +124,13 @@ export async function POST(request: NextRequest) {
       try {
         sessionId = await getOrCreateAnonymousSession()
         canUse = await canUseAnonymousRating(sessionId)
-      } catch (dbError: any) {
+      } catch (dbError) {
         console.error('Database query error (anonymous):', dbError)
-        if (dbError.code === 'P1001' || dbError.message?.includes('connect')) {
+        const code = (dbError as { code?: string }).code
+        const msg = dbError instanceof Error ? dbError.message : ''
+        if (code === 'P1001' || msg.includes('connect')) {
           return NextResponse.json(
-            { error: 'Erreur de connexion à la base de données' },
+            { error: 'Database connection error' },
             { status: 503 }
           )
         }
@@ -136,7 +140,7 @@ export async function POST(request: NextRequest) {
       if (!canUse) {
         return NextResponse.json(
           {
-            error: 'Limite gratuite atteinte. Créez un compte pour continuer.',
+            error: 'Free limit reached. Create an account to continue.',
             requiresAuth: true,
           },
           { status: 403 }
@@ -148,7 +152,7 @@ export async function POST(request: NextRequest) {
 
     if (!canProceed) {
       return NextResponse.json(
-        { error: 'Non autorisé' },
+        { error: 'Unauthorized' },
         { status: 403 }
       )
     }
@@ -164,9 +168,9 @@ export async function POST(request: NextRequest) {
       imageData: dataUrl,
       userId,
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Upload error:', error)
-    const errorMessage = error?.message || 'Erreur lors du téléchargement'
+    const errorMessage = error instanceof Error ? error.message : 'Upload failed'
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }

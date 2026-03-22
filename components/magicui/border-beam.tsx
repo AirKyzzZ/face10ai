@@ -3,9 +3,7 @@
 import { cn } from "@/lib/utils";
 import { motion, type Transition } from "framer-motion";
 
-type MotionStyle = React.CSSProperties & {
-  [key: string]: any;
-};
+type MotionStyle = React.CSSProperties & Record<string, unknown>;
 
 interface BorderBeamProps {
   /**

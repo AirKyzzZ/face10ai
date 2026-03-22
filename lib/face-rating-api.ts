@@ -64,7 +64,7 @@ async function imageToBase64(imageElement: HTMLImageElement | HTMLCanvasElement)
  */
 export async function analyzeFace(
   imageElement: HTMLImageElement | HTMLCanvasElement,
-  imageHash: string
+  _imageHash: string
 ): Promise<RatingResult> {
   try {
     // Detect face with landmarks using face-api.js

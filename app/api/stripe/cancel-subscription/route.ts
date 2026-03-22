@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-config'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Non autorisé' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
@@ -26,40 +26,42 @@ export async function POST(req: NextRequest) {
 
     if (!user || !user.stripeSubscriptionId) {
       return NextResponse.json(
-        { error: 'Aucun abonnement actif trouvé' },
+        { error: 'No active subscription found' },
         { status: 404 }
       )
     }
 
     // Cancel subscription at period end (user keeps access until then)
-    const subscription = await stripe.subscriptions.update(
+    const subscription = await getStripe().subscriptions.update(
       user.stripeSubscriptionId,
       {
         cancel_at_period_end: true,
       }
     )
 
-    // Get the period end timestamp (type assertion needed for Stripe SDK types)
-    const periodEnd = (subscription as any).current_period_end as number
+    // cancel_at is set by Stripe when cancel_at_period_end is true
+    const endsAt = subscription.cancel_at
+      ? new Date(subscription.cancel_at * 1000)
+      : new Date()
 
     // Update user subscription status
     await prisma.user.update({
       where: { id: user.id },
       data: {
         subscriptionStatus: 'canceled',
-        subscriptionEndDate: new Date(periodEnd * 1000),
+        subscriptionEndDate: endsAt,
       },
     })
 
     return NextResponse.json({
-      message: 'Abonnement annulé avec succès',
-      endsAt: new Date(periodEnd * 1000),
+      message: 'Subscription cancelled successfully',
+      endsAt,
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Cancel error:', error)
     return NextResponse.json(
-      { error: error.message || 'Erreur lors de l\'annulation' },
+      { error: error instanceof Error ? error.message : 'Failed to cancel subscription' },
       { status: 500 }
     )
   }

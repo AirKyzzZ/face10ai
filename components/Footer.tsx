@@ -10,7 +10,7 @@ export function Footer() {
               face10ai
             </h3>
             <p className="text-gray-600 text-sm">
-              Découvrez votre note d'attractivité grâce à notre algorithme IA avancé.
+              Découvrez votre note d&apos;attractivité grâce à notre algorithme IA avancé.
             </p>
           </div>
 
@@ -45,7 +45,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/terms" className="text-gray-600 hover:text-purple-600">
-                  Conditions d'utilisation
+                  Conditions d&apos;utilisation
                 </Link>
               </li>
             </ul>
@@ -54,7 +54,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Contact</h4>
             <p className="text-gray-600 text-sm">
-              Besoin d'aide ?<br />
+              Besoin d&apos;aide ?<br />
               <a href="mailto:contact@face10ai.com" className="text-purple-600 hover:underline">
                 contact@face10ai.com
               </a>

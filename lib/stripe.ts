@@ -1,6 +1,5 @@
 import 'server-only'
 import Stripe from 'stripe'
-import { TIER_CREDITS } from './subscription-config'
 
 // Lazy initialization to avoid build-time errors
 let stripeInstance: Stripe | null = null
@@ -64,7 +63,10 @@ export async function createCheckoutSession({
   const priceId = STRIPE_PRICE_IDS[tier][billingPeriod]
   
   if (!priceId) {
-    throw new Error(`Invalid tier or billing period: ${tier} - ${billingPeriod}`)
+    throw new Error(
+      `Missing Stripe price ID for ${tier}/${billingPeriod}. ` +
+      `Set STRIPE_${tier}_${billingPeriod === 'annual' ? 'ANNUAL_' : ''}PRICE_ID in environment.`
+    )
   }
 
   const session = await stripe.checkout.sessions.create({

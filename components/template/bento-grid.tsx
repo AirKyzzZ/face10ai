@@ -100,10 +100,10 @@ export default function BentoGrid() {
                 {/* Card Content */}
                 <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent">
                   <h3 className="text-[16px] text-white">
-                    Atteindre l'Audience Cible
+                    Atteindre l&apos;Audience Cible
                   </h3>
                   <p className="text-gray-400 text-sm">
-                    Ciblez l'audience parfaite avec précision. Notre ciblage alimenté par l'IA garantit que chaque message résonne là où c'est le plus important.
+                    Ciblez l&apos;audience parfaite avec précision. Notre ciblage alimenté par l&apos;IA garantit que chaque message résonne là où c&apos;est le plus important.
                   </p>
                 </div>
               </div>
@@ -161,10 +161,10 @@ export default function BentoGrid() {
                 </div>
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Analyse Facilitée par l'IA
+                    Analyse Facilitée par l&apos;IA
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Gagnez du temps et simplifiez l'analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
+                    Gagnez du temps et simplifiez l&apos;analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
                   </p>
                 </div>
               </CardContent>
@@ -313,10 +313,10 @@ export default function BentoGrid() {
               {/* Card Content */}
               <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-black/60 to-transparent">
                 <h3 className="text-[16px] text-white">
-                  Atteindre l'Audience Cible
+                  Atteindre l&apos;Audience Cible
                 </h3>
                 <p className="text-gray-400 text-sm">
-                  Ciblez l'audience parfaite avec précision. Notre ciblage alimenté par l'IA garantit que chaque message résonne là où c'est le plus important.
+                  Ciblez l&apos;audience parfaite avec précision. Notre ciblage alimenté par l&apos;IA garantit que chaque message résonne là où c&apos;est le plus important.
                 </p>
               </div>
             </div>
@@ -373,10 +373,10 @@ export default function BentoGrid() {
                 </div>
                 <div className="mt-4 space-y-2">
                   <h3 className="text-[16px] text-white">
-                    Analyse Facilitée par l'IA
+                    Analyse Facilitée par l&apos;IA
                   </h3>
                   <p className="text-sm text-gray-400">
-                    Gagnez du temps et simplifiez l'analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
+                    Gagnez du temps et simplifiez l&apos;analyse. Laissez nos workflows automatisés faire le gros du travail, pour que vous puissiez vous concentrer sur la créativité.
                   </p>
                 </div>
               </CardContent>

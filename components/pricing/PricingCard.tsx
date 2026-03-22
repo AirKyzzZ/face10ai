@@ -94,9 +94,9 @@ export function PricingCard({
       } else {
         throw new Error(data.error);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Cancel error:', error);
-      alert(error.message || 'Erreur lors de l\'annulation');
+      alert(error instanceof Error ? error.message : 'Cancellation failed');
     } finally {
       setIsCancelling(false);
     }
@@ -155,7 +155,7 @@ export function PricingCard({
         </div>
         {billingPeriod === 'annual' && !isFree && (
           <p className="text-green-400 text-sm mt-1 font-medium">
-            Facturé annuellement • Économisez jusqu'à 30%
+            Facturé annuellement • Économisez jusqu&apos;à 30%
           </p>
         )}
         <p className="text-gray-400 text-sm mt-2">
@@ -210,7 +210,7 @@ export function PricingCard({
       
       {isCurrentPlan && session?.user?.subscriptionStatus === 'canceled' && (
         <p className="text-center text-xs text-yellow-500 mt-3">
-          Abonnement annulé - Valide jusqu'à la fin de la période
+          Abonnement annulé - Valide jusqu&apos;à la fin de la période
         </p>
       )}
     </motion.div>

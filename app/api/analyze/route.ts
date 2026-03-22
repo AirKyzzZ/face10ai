@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     if (!imageHash || !score || !breakdown) {
       return NextResponse.json(
-        { error: 'Données manquantes' },
+        { error: 'Missing required data' },
         { status: 400 }
       )
     }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
       if (!success) {
         return NextResponse.json(
-          { error: 'Impossible de déduire le crédit' },
+          { error: 'Failed to deduct credit' },
           { status: 500 }
         )
       }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Analyze error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de l\'analyse' },
+      { error: 'Analysis failed' },
       { status: 500 }
     )
   }

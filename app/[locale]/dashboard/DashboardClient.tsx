@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Copy, Coins, TrendingUp, Users, Calendar, ArrowLeft, RefreshCw, Crown, Zap, AlertCircle } from 'lucide-react'
+import { Copy, Coins, TrendingUp, Users, ArrowLeft, RefreshCw, Crown, Zap, AlertCircle } from 'lucide-react'
 import { generateReferralUrl } from '@/lib/referrals'
 import { BorderBeam } from '@/components/magicui/border-beam'
 
@@ -13,6 +13,8 @@ interface User {
   email: string
   creditsRemaining: number
   referralCode: string
+  subscriptionTier: string | null
+  subscriptionStatus: string | null
   createdAt: Date
   ratings: Array<{
     id: string
@@ -50,8 +52,8 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
   const [isCancelling, setIsCancelling] = useState(false)
   const referralUrl = generateReferralUrl(user.referralCode)
   
-  const subscriptionTier = (user as any).subscriptionTier || 'FREE'
-  const subscriptionStatus = (user as any).subscriptionStatus
+  const subscriptionTier = user.subscriptionTier || 'FREE'
+  const subscriptionStatus = user.subscriptionStatus
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralUrl)
@@ -79,7 +81,7 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
       } else {
         setSyncMessage(`❌ ${data.error || 'Erreur de synchronisation'}`)
       }
-    } catch (error) {
+    } catch (_error) {
       setSyncMessage('❌ Erreur de connexion')
     } finally {
       setIsSyncing(false)
@@ -106,8 +108,8 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
       } else {
         throw new Error(data.error)
       }
-    } catch (error: any) {
-      alert(error.message || 'Erreur lors de l\'annulation')
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Erreur lors de l\'annulation')
     } finally {
       setIsCancelling(false)
     }
@@ -136,7 +138,7 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#2E3139] to-[#1E2536] border border-[#5B698B] rounded-lg text-white hover:border-[#8096D2] transition-all group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-light">Retour à l'accueil</span>
+            <span className="font-light">Retour à l&apos;accueil</span>
           </motion.button>
 
           {/* Sync Subscription Button */}
@@ -289,7 +291,7 @@ export default function DashboardClient({ user, referralStats }: DashboardClient
                   <div className="flex items-center gap-2 px-6 py-3 bg-yellow-500/20 border-2 border-yellow-500 rounded-lg text-yellow-500">
                     <AlertCircle className="w-4 h-4" />
                     <span className="font-light text-sm">
-                      Valide jusqu'à la fin de la période
+                      Valide jusqu&apos;à la fin de la période
                     </span>
                   </div>
                 ) : null}

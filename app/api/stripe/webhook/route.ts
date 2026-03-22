@@ -23,10 +23,11 @@ export async function POST(req: NextRequest) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     )
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message)
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('Webhook signature verification failed:', message)
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: `Webhook Error: ${message}` },
       { status: 400 }
     )
   }
@@ -64,10 +65,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('Webhook handler error:', error)
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    )
+    // Return 200 to prevent Stripe from retrying indefinitely.
+    // The error is logged for investigation but acknowledged to Stripe.
+    return NextResponse.json({ received: true, error: 'Handler failed' })
   }
 }
 
@@ -84,13 +84,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const customerId = session.customer as string
   const subscriptionId = session.subscription as string
 
-  // Calculate credits reset date based on billing period
-  const creditsResetAt = new Date()
-  if (billingPeriod === 'annual') {
-    creditsResetAt.setFullYear(creditsResetAt.getFullYear() + 1)
-  } else {
-    creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
-  }
+  // Calculate credits reset date based on billing period (UTC)
+  const now = Date.now()
+  const creditsResetAt = billingPeriod === 'annual'
+    ? new Date(now + 365 * 24 * 60 * 60 * 1000)
+    : new Date(now + 30 * 24 * 60 * 60 * 1000)
 
   // Update user with subscription info and grant credits
   await prisma.$transaction([
@@ -111,7 +109,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         userId,
         amount: TIER_CREDITS[tier],
         type: 'subscription',
-        description: `Crédits ${tier} - Nouvel abonnement`,
+        description: `${tier} credits - New subscription`,
       },
     }),
   ])
@@ -142,16 +140,13 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const isRenewal = invoice.billing_reason === 'subscription_cycle'
   
   if (isRenewal) {
-    // Reset credits based on subscription interval
+    // Reset credits based on subscription interval (UTC)
     const tier = user.subscriptionTier as 'PRO' | 'PREMIUM'
-    const creditsResetAt = new Date()
-    // Check subscription interval from Stripe
+    const renewalNow = Date.now()
     const interval = subscription.items.data[0]?.price?.recurring?.interval
-    if (interval === 'year') {
-      creditsResetAt.setFullYear(creditsResetAt.getFullYear() + 1)
-    } else {
-      creditsResetAt.setMonth(creditsResetAt.getMonth() + 1)
-    }
+    const creditsResetAt = interval === 'year'
+      ? new Date(renewalNow + 365 * 24 * 60 * 60 * 1000)
+      : new Date(renewalNow + 30 * 24 * 60 * 60 * 1000)
 
     await prisma.$transaction([
       prisma.user.update({
@@ -166,7 +161,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
           userId: user.id,
           amount: TIER_CREDITS[tier],
           type: 'subscription_renewal',
-          description: `Crédits ${tier} - Renouvellement mensuel`,
+          description: `${tier} credits - Subscription renewal`,
         },
       }),
     ])

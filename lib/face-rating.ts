@@ -32,18 +32,19 @@ function registerTFOpLambdaLayer() {
   }
 
   try {
-    // @ts-ignore - TFOpLambda is not in the TypeScript definitions
     class TFOpLambda extends tf.layers.Layer {
       private functionName: string
       private y: number | undefined
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       constructor(config?: any) {
         super(config || {})
         this.functionName = config?.function || ''
         this.y = config?.y
       }
 
-      call(inputs: tf.Tensor | tf.Tensor[], kwargs?: any): tf.Tensor | tf.Tensor[] {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      call(inputs: tf.Tensor | tf.Tensor[], _kwargs?: any): tf.Tensor | tf.Tensor[] {
         return tf.tidy(() => {
           // Get the actual tensor
           const input = Array.isArray(inputs) ? inputs[0] : inputs
@@ -68,6 +69,7 @@ function registerTFOpLambdaLayer() {
         return 'TFOpLambda'
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       getConfig(): any {
         const config = super.getConfig()
         return {
@@ -233,7 +235,7 @@ async function predictBeautyWithAI(
 
 export async function analyzeFace(
   imageElement: HTMLImageElement | HTMLCanvasElement,
-  imageHash: string
+  _imageHash: string
 ): Promise<RatingResult> {
   try {
     // Detect face with landmarks using TinyFaceDetector

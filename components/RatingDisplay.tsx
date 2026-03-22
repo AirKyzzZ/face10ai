@@ -8,7 +8,7 @@ interface RatingDisplayProps {
   breakdown: FaceAnalysis
 }
 
-export function RatingDisplay({ score, breakdown }: RatingDisplayProps) {
+export function RatingDisplay({ score, breakdown: _breakdown }: RatingDisplayProps) {
   const getScoreColor = (score: number) => {
     if (score >= 8) return 'text-green-600'
     if (score >= 6) return 'text-blue-600'

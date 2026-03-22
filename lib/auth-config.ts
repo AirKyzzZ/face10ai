@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as AuthOptions['adapter'],
   providers: [
     // Only include Google provider if credentials are configured
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -25,7 +25,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email et mot de passe requis')
+          throw new Error('Email and password are required')
         }
 
         const user = await prisma.user.findUnique({
@@ -35,7 +35,7 @@ export const authOptions: AuthOptions = {
         })
 
         if (!user || !user.password) {
-          throw new Error('Email ou mot de passe incorrect')
+          throw new Error('Invalid email or password')
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
         )
 
         if (!isPasswordValid) {
-          throw new Error('Email ou mot de passe incorrect')
+          throw new Error('Invalid email or password')
         }
 
         return {
@@ -86,7 +86,7 @@ export const authOptions: AuthOptions = {
             userId: user.id,
             amount: initialCredits,
             type: 'initial',
-            description: 'Crédits initiaux pour nouveau compte',
+            description: 'Initial credits for new account',
           },
         })
       }

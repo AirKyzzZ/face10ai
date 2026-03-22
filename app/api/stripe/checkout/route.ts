@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Non autorisé' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
@@ -18,14 +18,14 @@ export async function POST(req: NextRequest) {
     
     if (!tier || !['PRO', 'PREMIUM'].includes(tier)) {
       return NextResponse.json(
-        { error: 'Niveau d\'abonnement invalide' },
+        { error: 'Invalid subscription tier' },
         { status: 400 }
       )
     }
 
     if (!billingPeriod || !['monthly', 'annual'].includes(billingPeriod)) {
       return NextResponse.json(
-        { error: 'Période de facturation invalide' },
+        { error: 'Invalid billing period' },
         { status: 400 }
       )
     }
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Checkout error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la création de la session de paiement' },
+      { error: 'Failed to create checkout session' },
       { status: 500 }
     )
   }

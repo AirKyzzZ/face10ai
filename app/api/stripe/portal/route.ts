@@ -3,13 +3,13 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-config'
 import { createCustomerPortalSession } from '@/lib/stripe'
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
       return NextResponse.json(
-        { error: 'Non autorisé' },
+        { error: 'Unauthorized' },
         { status: 401 }
       )
     }
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     
     if (!customerId) {
       return NextResponse.json(
-        { error: 'Aucun abonnement trouvé' },
+        { error: 'No subscription found' },
         { status: 400 }
       )
     }
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Portal error:', error)
     return NextResponse.json(
-      { error: 'Erreur lors de la création du portail client' },
+      { error: 'Failed to create customer portal session' },
       { status: 500 }
     )
   }
