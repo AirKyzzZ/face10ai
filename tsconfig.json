@@ -36,8 +36,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": [
-    "node_modules",
-    "ez-saas"
-  ]
+  "exclude": ["node_modules"]
 }
